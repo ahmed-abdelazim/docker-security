@@ -302,7 +302,7 @@ if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then chown root:docker /var/run/docker.sock; fi
 
 echo "## 3.16 Verify that Docker socket file permissions are set to 660 or more restrictive (Scored)";
-if [ $(stat -c %a /var/run/docker.sock) == 660 ]; then echo "Ok" ; else echo "Bad"; fi
+if [ $(stat -c %a /var/run/docker.sock) = "660" ]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then chmod 660 /var/run/docker.sock; fi
 
 echo "## 3.17 Verify that daemon.json file ownership is set to root:root (Scored)";
@@ -311,7 +311,7 @@ if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then chown root:root /etc/docker/daemon.json; fi
 
 echo "## 3.18 Verify that daemon.json file permissions are set to 644 or more restrictive (Scored)";
-if [ $(stat -c %a /etc/docker/daemon.json) == 644 ]; then echo "Ok" ; else echo "Bad"; fi
+if [ $(stat -c %a /etc/docker/daemon.json)=="644" ]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then chmod 644 /etc/docker/daemon.json; fi
 
 echo "## 3.19 Verify that /etc/default/docker file ownership is set to root:root (Scored)";
@@ -320,7 +320,7 @@ if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then chown root:root /etc/default/docker; fi
 
 echo "## 3.20 Verify that /etc/default/docker file permissions are set to 644 or more restrictive (Scored)";
-if [ $(stat -c %a /etc/default/docker) == 644 ]; then echo "Ok" ; else echo "Bad"; fi
+if [ $(stat -c %a /etc/default/docker) = "644" ]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then chmod 644 /etc/default/docker; fi
 
 echo "# 4 Container Images and Build File";
@@ -371,7 +371,7 @@ instructions for images that you know are used as base images frequently."; fi
 
 
 echo "## 4.5 Enable Content trust for Docker (Scored)";
-if [ $DOCKER_CONTENT_TRUST -eq 1 ]; then echo "Ok" ; else echo "Bad"; fi
+if [[ $DOCKER_CONTENT_TRUST -eq 1 ]]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then export DOCKER_CONTENT_TRUST=1; fi
 
 echo "## 4.6 Add HEALTHCHECK instruction to the container image (Scored)";
@@ -485,7 +485,7 @@ I"; fi
 
 echo "## 5.4 Do not use privileged containers (Scored)";
 PTEST=$(docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Privileged={{.HostConfig.Privileged }}' | grep Privileged=true)
-if [ -z $PTEST ]; then echo "Ok"; else echo "Bad"; fi
+if [[ -z $PTEST ]]; then echo "Ok"; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then echo "Do not run container with the --privileged flag.
 For example, do not start a container as below:
 docker run --interactive --tty --privileged centos /bin/bash"; fi
@@ -550,7 +550,7 @@ docker run --interactive --tty --memory 256m centos /bin/bash
 In the above example, the container is started with a memory limit of 256 MB.
 Note: Please note that the output of the below command would return values in scientific
 notation if memory limits are in place.
-docker inspect --format='{{.Config.Memory}}' 7c5a2d4c7fe0
+docker inspect --format='{{.Config.Memory}}' 7c5a2d4c7fe0 
 For example, if the memory limit is set to 256 MB for the above container instance, the
 output of the above command would be 2.68435456e+08 and NOT 256m. You should
 convert this value using a scientific calculator or programmatic methods."; fi
@@ -682,7 +682,7 @@ docker run --rm --interactive --tty --uts=host rhel7.2"; fi
 
 echo "## 5.21 Do not disable default seccomp profile (Scored) ..164";
 docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}'
-echo "The above command should return "<no value>" or your modified seccomp profile. If it
+echo "The above command should return \"<no value>\" or your modified seccomp profile. If it
 returns [seccomp:unconfined], that means this recommendation is non-compliant and the
 container is running without any seccomp profiles."
 if [ "$1" == "-m" ]; then echo "Remediation:
