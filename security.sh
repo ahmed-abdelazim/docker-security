@@ -15,7 +15,6 @@ confirm() {
 #############################
 # Host configuration check. #
 #############################
-echo "{" >> output.json ;
 echo "## 1.1 Create a separate partition for containers (Scored)";
 echo "\"## 1.1 Create a separate partition for containers (Scored)\":" >> output.json ;
 if `grep /var/lib/docker /etc/fstab;`; then echo "Ok"; else echo "Bad"; fi
