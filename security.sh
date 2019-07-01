@@ -16,10 +16,9 @@ confirm() {
 # Host configuration check. #
 #############################
 echo "## 1.1 Create a separate partition for containers (Scored)";
-echo "\"## 1.1 Create a separate partition for containers (Scored)\":" >> output.json ;
 if `grep /var/lib/docker /etc/fstab;`; then echo "Ok"; else echo "Bad"; fi
 ## 1.2 Harden the container host (Not Scored)
-echo "## 1.3 Keep Docker up to date (Not Scored)" ; echo "\"## 1.3 Keep Docker up to date (Not Scored)\":" >> output.json ;
+echo "## 1.3 Keep Docker up to date (Not Scored)" ;
 echo $(docker version)
 echo "## 1.4 Only allow trusted users to control Docker daemon (Scored)"
 echo $(getent group docker)
