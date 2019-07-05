@@ -1,0 +1,19 @@
+[{
+		"id": "1.1",
+		"desc": "## 1.1 Create a separate partition for containers (Scored)",
+		"aud-cmd": "if `grep /var/lib/docker /etc/fstab;`; then echo \"Ok\"; else echo \"Bad\"; fi",
+		"aud-desc": "",
+		"rem-cmd": "",
+		"rem-desc": "",
+		"rem-exec": "0"
+	},
+	{
+		"id": "1.2",
+		"desc": "## 1.1 Create a separate partition for containers (Scored)",
+		"aud-cmd": "if `grep /var/lib/docker /etc/fstab;`; then echo \"Ok\"; else echo \"Bad\"; fi",
+		"aud-desc": "",
+		"rem-cmd": "",
+		"rem-desc": "",
+		"rem-exec": "0"
+	}
+]
