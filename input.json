@@ -297,161 +297,161 @@
 },{
     "id": "3.1",
     "desc": "3.1 Verify that docker.service file ownership is set to root:root (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "export MYLOCATION=$(systemctl show -p FragmentPath docker.service | cut -d = -f2);\r\nstat -c %U:%G $MYLOCATION | grep -v root:root;\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chown root:root $MYLOCATION",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.2",
     "desc": "3.2 Verify that docker.service file permissions are set to 644 or more restrictive (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "stat -c %a $MYLOCATION\r\nif [ $(stat -c %a $MYLOCATION) == 644 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "if [ \"$1\" == \"-m\" ]; then chmod 644 $MYLOCATION; fi",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.3",
     "desc": "3.3 Verify that docker.socket file ownership is set to root:root (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "export SOCKET=$(systemctl show -p FragmentPath docker.socket | cut -d = -f2);\r\nstat -c %U:%G $SOCKET | grep -v root:root\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chown root:root $SOCKET",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.4",
     "desc": "3.4 Verify that docker.socket file permissions are set to 644 or more restrictive (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "stat -c %a $SOCKET\r\nif [ $(stat -c %a $SOCKET) == 644 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chmod 644 $SOCKET",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.5",
     "desc": "3.5 Verify that /etc/docker directory ownership is set to root:root (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "stat -c %U:%G /etc/docker | grep -v root:root;\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chown root:root /etc/docker",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.6",
     "desc": "3.6 Verify that /etc/docker directory permissions are set to 755 or more restrictive (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "stat -c %a /etc/docker;\r\nif [ $(stat -c %a /etc/docker) == 755 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chmod 755 /etc/docker",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.7",
     "desc": "3.7 Verify that registry certificate file ownership is set to root:root (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "stat -c %U:%G /etc/docker/certs.d/* | grep -v root:root\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: chown root:root /etc/docker/certs.d/<registry-name>/*",
     "rem-exec": "0"
 },{
     "id": "3.8",
     "desc": "3.8 Verify that registry certificate file permissions are set to 444 or more restrictive (Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Execute the below command to verify that the registry certificate files have permissions of\r\n'444' or more restrictive:\r\nstat -c %a /etc/docker/certs.d/<registry-name>/*",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: chmod 444 /etc/docker/certs.d/<registry-name>/*",
     "rem-exec": "0"
 },{
     "id": "3.9",
     "desc": "3.9 Verify that TLS CA certificate file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Execute the below command to verify that the TLS CA certificate file is owned and groupowned by 'root':\r\nstat -c %U:%G <path to TLS CA certificate file> | grep -v root:root\r\nThe above command should not return anything.",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: chown root:root <path to TLS CA certificate file>",
     "rem-exec": "0"
 },{
     "id": "3.10",
     "desc": "3.10 Verify that TLS CA certificate file permissions are set to 444 or more restrictive (Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Execute the below command to verify that the TLS CA certificate file has permissions of\r\n'444' or more restrictive:\r\nstat -c %a <path to TLS CA certificate file>",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: chmod 444 <path to TLS CA certificate file>",
     "rem-exec": "0"
 },{
     "id": "3.11",
     "desc": "3.11 Verify that Docker server certificate file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Audit:\r\nExecute the below command to verify that the Docker server certificate file is owned and\r\ngroup-owned by 'root':\r\nstat -c %U:%G <path to Docker server certificate file> | grep -v root:root",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: chown root:root <path to Docker server certificate file>",
     "rem-exec": "0"
 },{
     "id": "3.12",
     "desc": "3.12 Verify that Docker server certificate file permissions are set to 444 or more restrictive (Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Execute the below command to verify that the Docker server certificate file has\r\npermissions of '444' or more restrictive:\r\nstat -c %a <path to Docker server certificate file>",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: chmod 444 <path to Docker server certificate file>",
     "rem-exec": "0"
 },{
     "id": "3.13",
     "desc": "3.13 Verify that Docker server certificate key file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Execute the below command to verify that the Docker server certificate key file is owned\r\nand group-owned by 'root':\r\nstat -c %U:%G <path to Docker server certificate key file> | grep -v root:root",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: chown root:root <path to Docker server certificate key file>",
     "rem-exec": "0"
 },{
     "id": "3.14",
     "desc": "3.14 Verify that Docker server certificate key file permissions are set to 400 (Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Execute the below command to verify that the Docker server certificate key file has\r\npermissions of '400':\r\nstat -c %a <path to Docker server certificate key file>",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: chmod 400 <path to Docker server certificate key file>",
     "rem-exec": "0"
 },{
     "id": "3.15",
     "desc": "3.15 Verify that Docker socket file ownership is set to root:docker (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "stat -c %U:%G /var/run/docker.sock | grep -v root:docker\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chown root:docker /var/run/docker.sock",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.16",
     "desc": "3.16 Verify that Docker socket file permissions are set to 660 or more restrictive (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "if [ $(stat -c %a /var/run/docker.sock) = \"660\" ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chmod 660 /var/run/docker.sock",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.17",
     "desc": "3.17 Verify that daemon.json file ownership is set to root:root (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "stat -c %U:%G /etc/docker/daemon.json | grep -v root:root\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chown root:root /etc/docker/daemon.json",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.18",
     "desc": "3.18 Verify that daemon.json file permissions are set to 644 or more restrictive (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "if [ $(stat -c %a /etc/docker/daemon.json)==\"644\" ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chmod 644 /etc/docker/daemon.json",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.19",
     "desc": "3.19 Verify that /etc/default/docker file ownership is set to root:root (Scored)103",
-    "aud-cmd": "",
+    "aud-cmd": "stat -c %U:%G /etc/default/docker | grep -v root:root\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chown root:root /etc/default/docker",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.20",
     "desc": "3.20 Verify that /etc/default/docker file permissions are set to 644 or more restrictive (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "if [ $(stat -c %a /etc/default/docker) = \"644\" ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "",
+    "rem-cmd": "chmod 644 /etc/default/docker",
     "rem-desc": "",
     "rem-exec": "0"
 },{
