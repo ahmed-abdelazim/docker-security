@@ -1,0 +1,833 @@
+[{
+    "id": "1.1",
+    "desc": "1.1 Create a separate partition for containers (Scored)",
+    "aud-cmd": "if  `grep /var/lib/docker /etc/fstab;`  ; then echo \"Ok\"; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "echo ok-cmd",
+    "rem-desc": "",
+    "rem-exec": "1"
+},{
+    "id": "1.2",
+    "desc": "1.2 Harden the container host (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "echo ok-cmd",
+    "rem-desc": "",
+    "rem-exec": "1"
+},{
+    "id": "1.3",
+    "desc": "1.3 Keep Docker up to date (Not Scored)",
+    "aud-cmd": "echo $(docker version)",
+    "aud-desc": "",
+    "rem-cmd": "echo ok-cmd",
+    "rem-desc": "",
+    "rem-exec": "1"
+},{
+    "id": "1.4",
+    "desc": "1.4 Only allow trusted users to control Docker daemon (Scored)",
+    "aud-cmd": "echo $(getent group docker)",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.5",
+    "desc": "1.5 Audit docker daemon (Scored 18)",
+    "aud-cmd": "if `auditctl -l | grep /usr/bin/docker;`; then echo \"Ok\"; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.6",
+    "desc": "1.6 Audit Docker files and directories - /var/lib/docker (Scored)",
+    "aud-cmd": "if `auditctl -l | grep /var/lib/docker;`; then echo \"Ok\"; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.7",
+    "desc": "1.7 Audit Docker files and directories - /etc/docker (Scored)",
+    "aud-cmd": "if `auditctl -l | grep /etc/docker;`; then echo \"Ok\"; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.8",
+    "desc": "1.8 Audit Docker files and directories - docker.service (Scored)",
+    "aud-cmd": "if `auditctl -l | grep docker.service ;`; then echo \"Ok\"; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.9",
+    "desc": "1.9 Audit Docker files and directories - docker.socket (Scored)",
+    "aud-cmd": "auditctl -l | grep docker.socket ;if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.10",
+    "desc": "1.10 Audit Docker files and directories - /etc/default/docker (Scored)",
+    "aud-cmd": "auditctl -l | grep /etc/default/docker ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.11",
+    "desc": "1.11 Audit Docker files and directories - /etc/docker/daemon.json (Scored)",
+    "aud-cmd": "auditctl -l | grep /etc/docker/daemon.json ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.12",
+    "desc": "1.12 Audit Docker files and directories - /usr/bin/docker-containerd (Scored)",
+    "aud-cmd": "auditctl -l | grep /usr/bin/docker-containerd ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "1.13",
+    "desc": "1.13 Audit Docker files and directories - /usr/bin/docker-runc (Scored)",
+    "aud-cmd": "auditctl -l | grep /usr/bin/docker-runc ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.1",
+    "desc": "2.1 Restrict network traffic between containers (Scored)",
+    "aud-cmd": "docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}';",
+    "aud-desc": "##  It should return com.docker.network.bridge.enable_icc:false. ##",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.2",
+    "desc": "2.2 Set the logging level (Scored)",
+    "aud-cmd": "echo $(ps -ef | grep dockerd;) dockerd --log-level=\"info\";",
+    "aud-desc": "Ensure that either the '--log-level' parameter is not present or if present, then it is set to 'info'.",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.3",
+    "desc": "2.3 Allow Docker to make changes to iptables (Scored)",
+    "aud-cmd": "ps -ef | grep dockerd;if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.4",
+    "desc": "2.4 Do not use insecure registries (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep insecure-registry ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "Ensure that the '--insecure-registry' parameter is not present.",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.5",
+    "desc": "2.5 Do not use the aufs storage driver (Scored)",
+    "aud-cmd": "echo $(docker info | grep -e \"^Storage Driver:\\s*aufs\\s*$\")",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.6",
+    "desc": "2.6 Configure TLS authentication for Docker daemon (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep tlsverify ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; ps -ef | grep -v grep | grep tlscacert ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; ps -ef | grep -v grep| grep tlscert ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; ps -ef | grep -v grep| grep tlskey ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.7",
+    "desc": "2.7 Set default ulimit as appropriate (Not Scored)",
+    "aud-cmd": "ps -ef | grep dockerd | grep -v grep | grep default-ulimit ;",
+    "aud-desc": "# Ensure that the '--default-ulimit' parameter is set as appropriate.",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.8",
+    "desc": "2.8 Enable user namespace support (Scored)",
+    "aud-cmd": "docker info --format '{{ .SecurityOptions }}' | grep userns;",
+    "aud-desc": "# ensure that the userns is listed under Security Options",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.9",
+    "desc": "2.9 Confirm default cgroup usage (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep cgroup-parent",
+    "aud-desc": "# Ensure that the '--cgroup-parent' parameter is either not set or is set as appropriate nondefault cgroup.",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.10",
+    "desc": "2.10 Do not change base device size until needed (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep storage-opt ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; ps -ef | grep -v grep| grep dockerd | grep dm.basesize ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; if [ \"$1\" == \"-m\" ]; then echo \" ## Do not set --storage-opt dm.basesize until needed\"; fi ; echo \"## 2.11 Use authorization plugin (Scored)\" ; ps -ef | grep -v grep| grep dockerd | grep authorization-plugin ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; if [ \"$1\" == \"-m\" ]; then echo\"Step 1: Install/Create an authorization plugin. ; Step 2: Configure the authorization policy as desired. ; Step 3: Start the docker daemon as below: ; dockerd --authorization-plugin=<PLUGIN_ID> /n\"; f",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.11",
+    "desc": "2.11 Use authorization plugin (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep authorization-plugin\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "Step 1: Install/Create an authorization plugin.\r\nStep 2: Configure the authorization policy as desired.\r\nStep 3: Start the docker daemon as below:\r\ndockerd --authorization-plugin=<PLUGIN_ID> /n",
+    "rem-exec": "0"
+},{
+    "id": "2.12",
+    "desc": "2.12 Configure centralized and remote logging (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep log-driver ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "Remediation:\r\nStep 1: Setup the desired log driver by following its documentation.\r\nStep 2: Start the docker daemon with that logging driver.\r\nFor example,\r\ndockerd --log-driver=syslog --log-opt syslog-address=tcp://192.xxx.xxx.xxx",
+    "rem-exec": "0"
+},{
+    "id": "2.13",
+    "desc": "2.13 Disable operations on legacy registry (v1) (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep disable-legacy-registry\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi\r\nif [ \"$1\" == \"-m\" ]; then dockerd --disable-legacy-registry; fi\r\necho \"## 2.14 Enable live restore (Scored)\"\r\nps -ef | grep -v grep| grep dockerd | grep live-restore\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "dockerd --disable-legacy-registry",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.14",
+    "desc": "2.14 Enable live restore (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep live-restore\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "dockerd --live-restore",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.15",
+    "desc": "2.15 Do not enable swarm mode, if not needed (Scored)",
+    "aud-cmd": " docker info| grep -v grep| grep 'Swarm: inactive'\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "docker swarm leave",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.16",
+    "desc": "2.16 Control the number of manager nodes in a swarm (Scored)",
+    "aud-cmd": "docker node ls | grep 'Leader'",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "Remediation:\r\nIf an excessive number of managers is configured, the excess can be demoted as worker\r\nusing the following command:\r\ndocker node demote <ID>\r\nWhere <ID> is the node ID value of the manager to be demoted",
+    "rem-exec": "0"
+},{
+    "id": "2.17",
+    "desc": "2.17 Bind swarm services to a specific host interface (Scored)",
+    "aud-cmd": "netstat -lt | grep -i 2377 ; if [ $? -ne 0 ]; then echo \"It seems that Swarm mode NOT enabled\" ; else echo \"confirm that that each overlay network has been encrypted.\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "Remediation: dockerd --cgroup-parent=/foobar",
+    "rem-exec": "0"
+},{
+    "id": "2.18",
+    "desc": "2.18 Disable Userland Proxy (Scored)",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep userland-proxy\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "if [ \"$1\" == \"-m\" ]; then echo \"Create overlay network with --opt encrypted flag.\"; fi",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.19",
+    "desc": "2.19 Encrypt data exchanged between containers on different nodes on the overlay network (Scored)",
+    "aud-cmd": "docker network ls --filter driver=overlay --quiet\r\nif [ $? -ne 0 ]; then echo \"It seems that Swarm mode NOT enabled\" ; else echo \"confirm that it is only listening on specific interfaces.\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "Remediation:\r\nCreate overlay network with --opt encrypted flag.",
+    "rem-exec": "0"
+},{
+    "id": "2.20",
+    "desc": "2.20 Apply a daemon-wide custom seccomp profile, if needed (Not Scored)",
+    "aud-cmd": "docker info --format '{{ .SecurityOptions }}' | grep default\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "Remediation:\r\nBy default, Docker's default seccomp profile is applied. If this is good for your environment,\r\nno action is necessary. Alternatively, if you choose to apply your own seccomp profile, use\r\nthe --seccomp-profile flag at daemon start or put it in the daemon runtime parameters\r\nfile.\r\ndockerd --seccomp-profile </path/to/seccomp/profile>",
+    "rem-exec": "0"
+},{
+    "id": "2.21",
+    "desc": "2.21 Avoid experimental features in production (Scored)",
+    "aud-cmd": "docker version --format '{{ .Server.Experimental }}'\r\nif [ `docker version --format '{{ .Server.Experimental }}'` == false ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "Do not pass --experimental as a runtime parameter to the docker daemon",
+    "rem-exec": "0"
+},{
+    "id": "2.22",
+    "desc": "2.22 Use Docker's secret management commands for managing secrets in a Swarm cluster (Not Scored)",
+    "aud-cmd": "docker secret ls | grep 'not a swarm'\r\nif [ $? -eq 0 ]; then echo \"not a swarm manager node\" ; else echo \"Follow docker secret documentation and use it to manage secrets effectively\"; fi",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.23",
+    "desc": "2.23 Run swarm manager in auto-lock mode (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "If it outputs the key, it means swarm was initialized with the --\r\nautolock flag. If the output is no unlock key is set, it means that swarm was NOT\r\ninitialized with the --autolock flag and is non-compliant with respect to this\r\nrecommendation.",
+    "rem-cmd": "confirm \"This will run swarm. proceed?\" && docker swarm unlock-key  ",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "2.24",
+    "desc": "2.24 Rotate swarm manager auto-lock key periodically (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "If it outputs the key, it means swarm was initialized with the --\r\nautolock flag. If the output is no unlock key is set, it means that swarm was NOT\r\ninitialized with the --autolock flag and is non-compliant with respect to this\r\nrecommendation.",
+    "rem-cmd": "docker swarm unlock-key --rotate",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.1",
+    "desc": "3.1 Verify that docker.service file ownership is set to root:root (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.2",
+    "desc": "3.2 Verify that docker.service file permissions are set to 644 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.3",
+    "desc": "3.3 Verify that docker.socket file ownership is set to root:root (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.4",
+    "desc": "3.4 Verify that docker.socket file permissions are set to 644 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.5",
+    "desc": "3.5 Verify that /etc/docker directory ownership is set to root:root (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.6",
+    "desc": "3.6 Verify that /etc/docker directory permissions are set to 755 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.7",
+    "desc": "3.7 Verify that registry certificate file ownership is set to root:root (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.8",
+    "desc": "3.8 Verify that registry certificate file permissions are set to 444 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.9",
+    "desc": "3.9 Verify that TLS CA certificate file ownership is set to root:root (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.10",
+    "desc": "3.10 Verify that TLS CA certificate file permissions are set to 444 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.11",
+    "desc": "3.11 Verify that Docker server certificate file ownership is set to root:root (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.12",
+    "desc": "3.12 Verify that Docker server certificate file permissions are set to 444 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.13",
+    "desc": "3.13 Verify that Docker server certificate key file ownership is set to root:root (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.14",
+    "desc": "3.14 Verify that Docker server certificate key file permissions are set to 400 (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.15",
+    "desc": "3.15 Verify that Docker socket file ownership is set to root:docker (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.16",
+    "desc": "3.16 Verify that Docker socket file permissions are set to 660 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.17",
+    "desc": "3.17 Verify that daemon.json file ownership is set to root:root (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.18",
+    "desc": "3.18 Verify that daemon.json file permissions are set to 644 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.19",
+    "desc": "3.19 Verify that /etc/default/docker file ownership is set to root:root (Scored)103",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "3.20",
+    "desc": "3.20 Verify that /etc/default/docker file permissions are set to 644 or more restrictive (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.1",
+    "desc": "4.1 Create a user for the container (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.2",
+    "desc": "4.2 Use trusted base images for containers (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.3",
+    "desc": "4.3 Do not install unnecessary packages in the container (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.4",
+    "desc": "4.4 Scan and rebuild the images to include security patches (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.5",
+    "desc": "4.5 Enable Content trust for Docker (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.6",
+    "desc": "4.6 Add HEALTHCHECK instruction to the container image (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.7",
+    "desc": "4.7 Do not use update instructions alone in the Dockerfile (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.8",
+    "desc": "4.8 Remove setuid and setgid permissions in the images (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.9",
+    "desc": "4.9 Use COPY instead of ADD in Dockerfile (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.10",
+    "desc": "4.10 Do not store secrets in Dockerfiles (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "4.11",
+    "desc": "4.11 Install verified packages only (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.1",
+    "desc": "5.1 Do not disable AppArmor Profile (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.2",
+    "desc": "5.2 Verify SELinux security options, if applicable (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.3",
+    "desc": "5.3 Restrict Linux Kernel Capabilities within containers (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.4",
+    "desc": "5.4 Do not use privileged containers (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.5",
+    "desc": "5.5 Do not mount sensitive host system directories on containers (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.6",
+    "desc": "5.6 Do not run ssh within containers (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.7",
+    "desc": "5.7 Do not map privileged ports within containers (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.8",
+    "desc": "5.8 Open only needed ports on container (Scored)...139",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.9",
+    "desc": "5.9 Do not share the host's network namespace (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.10",
+    "desc": "5.10 Limit memory usage for container (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.11",
+    "desc": "5.11 Set container CPU priority appropriately (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.12",
+    "desc": "5.12 Mount container's root filesystem as read only (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.13",
+    "desc": "5.13 Bind incoming container traffic to a specific host interface (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.14",
+    "desc": "5.14 Set the 'on-failure' container restart policy to 5 (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.15",
+    "desc": "5.15 Do not share the host's process namespace (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.16",
+    "desc": "5.16 Do not share the host's IPC namespace (Scored).154",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.17",
+    "desc": "5.17 Do not directly expose host devices to containers (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.18",
+    "desc": "5.18 Override default ulimit at runtime only if needed (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.19",
+    "desc": "5.19 Do not set mount propagation mode to shared (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.20",
+    "desc": "5.20 Do not share the host's UTS namespace (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.21",
+    "desc": "5.21 Do not disable default seccomp profile (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.22",
+    "desc": "5.22 Do not docker exec commands with privileged option (Scored166",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.23",
+    "desc": "5.23 Do not docker exec commands with user option (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.24",
+    "desc": "5.24 Confirm cgroup usage (Scored)..168",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.25",
+    "desc": "5.25 Restrict container from acquiring additional privileges (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.26",
+    "desc": "5.26 Check container health at runtime (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.27",
+    "desc": "5.27 Ensure docker commands always get the latest version of the image (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.28",
+    "desc": "5.28 Use PIDs cgroup limit (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.29",
+    "desc": "5.29 Do not use Docker's default bridge docker0 (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.30",
+    "desc": "5.30 Do not share the host's user namespaces (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "5.31",
+    "desc": "5.31 Do not mount the Docker socket inside any containers (Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "6.1",
+    "desc": "6.1 Perform regular security audits of your host system and containers (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "6.2",
+    "desc": "6.2 Monitor Docker containers usage, performance and metering (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "6.3",
+    "desc": "6.3 Backup container data (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "6.4",
+    "desc": "6.4 Avoid image sprawl (Not Scored) 186",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+},{
+    "id": "6.5",
+    "desc": "6.5 Avoid container sprawl (Not Scored)",
+    "aud-cmd": "",
+    "aud-desc": "",
+    "rem-cmd": "",
+    "rem-desc": "",
+    "rem-exec": "0"
+}]

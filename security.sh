@@ -81,8 +81,7 @@ docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Nam
 ### same host is desired, then it needs to be explicitly defined using container linking. ###
 #############################################################################################
 echo "## 2.2 Set the logging level (Scored)"
-echo "Ensure that either the '--log-level' parameter is not present or if present, then it is set to
-'info'."
+echo "Ensure that either the '--log-level' parameter is not present or if present, then it is set to 'info'."
 echo $(ps -ef | grep dockerd;)
 dockerd --log-level="info";
 echo "## 2.3 Allow Docker to make changes to iptables (Scored)";
@@ -152,6 +151,7 @@ echo "## 2.13 Disable operations on legacy registry (v1) (Scored)"
 ps -ef | grep -v grep| grep dockerd | grep disable-legacy-registry
 if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then dockerd --disable-legacy-registry; fi
+
 echo "## 2.14 Enable live restore (Scored)"
 ps -ef | grep -v grep| grep dockerd | grep live-restore
 if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
