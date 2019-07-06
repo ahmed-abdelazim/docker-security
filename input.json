@@ -740,61 +740,61 @@
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}' | grep no-new-privileges\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nStart a container as below:\r\ndocker run <run-options> --security-opt=no-new-privileges <IMAGE> <CMD>\r\nFor example,\r\ndocker run --rm -it --security-opt=no-new-privileges ubuntu bash",
     "rem-exec": "0"
 },{
     "id": "5.26",
     "desc": "5.26 Check container health at runtime (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "docker ps --quiet | xargs sudo docker inspect --format '{{ .Id }}:Health={{ .State.Status }}'",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nRun the container using --health-cmd and the other parameters.\r\nFor example,\r\ndocker run -d --health-cmd='stat /etc/passwd || exit 1' nginx",
     "rem-exec": "0"
 },{
     "id": "5.27",
     "desc": "5.27 Ensure docker commands always get the latest version of the image (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Step 1: Open your image repository and list the image version history for the image you\r\nare inspecting.\r\nStep 2: Observe the status when the docker pull command is triggered.\r\nIf the status is shown as Image is up to date, it means that you are getting the cached\r\nversion of the image.\r\nStep 3: Match the version of the image you are running with the latest version reported in\r\nyour repository which tells if you are running the cached version or the latest copy",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nUse proper version pinning mechanisms (the latest tag which is assigned by default is still\r\nvulnerable to caching attacks) to avoid extracting the cached older versions. Version\r\npinning mechanisms should be used for base images, packages, and entire images too. You\r\ncan customize version pinning rules as per your requirements.",
     "rem-exec": "0"
 },{
     "id": "5.28",
     "desc": "5.28 Use PIDs cgroup limit (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: PidsLimit={{.HostConfig.PidsLimit }}' | grep PidsLimit=0\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nUse --pids-limit flag while launching the container with an appropriate value.\r\nFor example,\r\ndocker run -it --pids-limit 100 <Image_ID>\r\nIn the above example, the number of processes allowed to run at any given time is set to\r\n100. After a limit of 100 concurrently running processes is reached, docker would restrict\r\nany new process creation.",
     "rem-exec": "0"
 },{
     "id": "5.29",
     "desc": "5.29 Do not use Docker's default bridge docker0 (Not Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}' | grep docker0\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nFollow Docker documentation and setup a user-defined network. Run all the containers in\r\nthe defined network.",
     "rem-exec": "0"
 },{
     "id": "5.30",
     "desc": "5.30 Do not share the host's user namespaces (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: UsernsMode={{.HostConfig.UsernsMode }}'\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: Do not share user namespaces between host and containers.",
     "rem-exec": "0"
 },{
     "id": "5.31",
     "desc": "5.31 Do not mount the Docker socket inside any containers (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Volumes={{ .Mounts}}' | grep docker.sock\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: Ensure that no containers mount docker.sock as a volume.",
     "rem-exec": "0"
 },{
     "id": "6.1",
     "desc": "6.1 Perform regular security audits of your host system and containers (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "docker stats $(docker ps --quiet)\r\nThe above commands would return CPU, memory and network statistics for every running\r\ncontainer.",
     "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "0"
@@ -804,30 +804,30 @@
     "aud-cmd": "",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation: Use a software or a container for tracking container usage, reporting performance and metering.",
     "rem-exec": "0"
 },{
     "id": "6.3",
     "desc": "6.3 Backup container data (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Ask the system administrator whether container data volumes are regularly backed up.\r\nVerify a copy of the backup and ensure that the organization's backup policy is followed.\r\nAdditionally, you can execute the below command for each container instance to list the\r\nchanged files and directories in the container᾿s filesystem. Ideally, nothing should be stored\r\non container's filesystem.\r\ndocker diff INSTANCE_ID",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nYou should follow your organization's policy for data backup. You can take backup of your\r\ncontainer data volume using '--volumes-from' parameter as below:\r\n$> docker run <Run arguments> --volumes-from INSTANCE_ID -v [host-dir]:[containerdir] <Container Image Name or ID> <Command>\r\nFor example,\r\ndocker run --volumes-from 699ee3233b96 -v /mybackup:/backup centos tar cvf\r\n/backup/backup.tar /exampledatatobackup",
     "rem-exec": "0"
 },{
     "id": "6.4",
     "desc": "6.4 Avoid image sprawl (Not Scored) 186",
     "aud-cmd": "",
-    "aud-desc": "",
+    "aud-desc": "Step 1 Make a list of all image IDs that are currently instantiated by executing below\r\ncommand:\r\ndocker images --quiet | xargs docker inspect --format '{{ .Id }}: Image={{\r\n.Config.Image }}'\r\nStep 2: List all the images present on the system by executing below command:\r\ndocker images\r\nStep 3: Compare the list of image IDs populated from Step 1 and Step 2 and find out images\r\nthat are currently not being instantiated. If any such unused or old images are found,\r\ndiscuss with the system administrator the need to keep such images on the system. If such\r\na need is not justified enough, then this recommendation is non-compliant.",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nKeep the set of the images that you actually need and establish a workflow to remove old or\r\nstale images from the host. Additionally, use features such as pull-by-digest to get specific\r\nimages from the registry.\r\nAdditionally, you can follow below set of steps to find out unused images on the system and\r\ndelete them.\r\n\r\nStep 1 Make a list of all image IDs that are currently instantiated by executing below\r\ncommand:187 | P a g e\r\ndocker images --quiet | xargs docker inspect --format '{{ .Id }}: Image={{\r\n.Config.Image }}'\r\nStep 2: List all the images present on the system by executing below command:\r\ndocker images\r\nStep 3: Compare the list of image IDs populated from Step 1 and Step 2 and find out images\r\nthat are currently not being instantiated.\r\nStep 4: Decide if you want to keep the images that are not currently in use. If not delete\r\nthem by executing below command:\r\ndocker rmi IMAGE_ID",
     "rem-exec": "0"
 },{
     "id": "6.5",
     "desc": "6.5 Avoid container sprawl (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "",
-    "rem-cmd": "",
+    "aud-desc": "Execute docker info to find the total number of containers you have on the host:\r\ndocker info --format '{{ .Containers }}'\r\nNow, execute the below commands to find the total number of containers that are actually\r\nrunning or in the stopped state on the host.\r\ndocker info --format '{{ .ContainersStopped }}'\r\ndocker info --format '{{ .ContainersRunning }}'\r\nIf the difference between the number of containers that are stopped on the host and the\r\nnumber of containers that are actually running on the host is large (say 25 or more), then\r\nperhaps, the containers are sprawled on the host.",
+    "rem-cmd": "if [ \"$1\" == \"-m\" ]; then confirm \" DANGER This will  execute docker container prune ARE YOU SURE? \" && docker container prune ;fi",
     "rem-desc": "",
     "rem-exec": "0"
 }]

@@ -12,27 +12,20 @@ confirm() {
             ;;
     esac
 }
-rm report.txt
+#rm report.txt
 #jq -r '.[0]."aud-cmd"'  input.json ;
-len=$(jq '. | length' input.json) ;
-#len=100
+#len=$(jq '. | length' input.json) ;
+len=100
 x=0
 while [[ $x -lt $len ]]
 do
 echo $(jq --arg x $x -r '[.[] ] | .[$x | tonumber]."desc"' input.json) >> report.txt;
 echo $(jq --arg x $x -r '[.[] ] | .[$x | tonumber]."aud-cmd"' input.json) > temp.sh && bash temp.sh >> report.txt && rm temp.sh ;
-
 echo $(jq --arg x $x -r '[.[] ] | .[$x | tonumber]."aud-desc"' input.json) >> report.txt;
-
 if [[ `jq --arg x $x -r '[.[] ] | .[$x | tonumber]."rem-exec"' input.json` -eq 1 ]] ; then echo $(jq --arg x $x -r '[.[] ] | .[$x | tonumber]."rem-cmd"' input.json) > temp.sh && bash temp.sh >> report.txt && rm temp.sh ; fi
-
-
 if [[ `jq --arg x $x -r '[.[] ] | .[$x | tonumber]."rem-exec"' input.json` -eq 1 ]] ; then jq --arg x $x -r '[.[] ] | .[$x | tonumber]."rem-desc"' input.json >> report.txt;
-
-
 #jq --arg x $x -r '[.[] ] | .[$x | tonumber]."desc"' input.json ;
 echo $x >> report.txt ;
 x=$(( $x + 1 )) ;
-echo $x
+echo $x ;
 done
-
