@@ -688,7 +688,8 @@ By default, seccomp profiles are enabled. You do not need to do anything unless 
 to modify and use the modified seccomp profile."; fi
 
 echo "## 5.22 Do not docker exec commands with privileged option (Scored)";
-if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+ausearch -k docker | grep exec | grep privileged
+if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
 if [ "$1" == "-m" ]; then echo "Remediation:
 Do not use --privileged option in docker exec command."; fi
 
