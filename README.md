@@ -9,4 +9,4 @@ https://github.com/cismirror/benchmarks/raw/master/CIS_Docker_1.13.0_Benchmark_v
 Just run `sudo bash security.sh > report.txt`
 
 ## Run test based on input.json
-`sudo bash sec-input.json`
+`sudo bash sec-input.sh`
