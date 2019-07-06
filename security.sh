@@ -720,7 +720,7 @@ docker run --rm -it --security-opt=no-new-privileges ubuntu bash"; fi
 
 
 echo "## 5.26 Check container health at runtime (Scored)";
-#docker ps --quiet | xargs docker inspect --format '{{ .Id }}: Health={{.State.Health.Status }}'
+docker ps --quiet | xargs sudo docker inspect --format '{{ .Id }}:Health={{ .State.Status }}'
 if [ "$1" == "-m" ]; then echo "Remediation:
 Run the container using --health-cmd and the other parameters.
 For example,

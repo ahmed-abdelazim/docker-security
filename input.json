@@ -713,31 +713,31 @@
 },{
     "id": "5.22",
     "desc": "5.22 Do not docker exec commands with privileged option (Scored166",
-    "aud-cmd": "",
+    "aud-cmd": "ausearch -k docker | grep exec | grep privileged\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nDo not use --privileged option in docker exec command.",
     "rem-exec": "0"
 },{
     "id": "5.23",
     "desc": "5.23 Do not docker exec commands with user option (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "ausearch -k docker | grep exec | grep user\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:\r\nDo not use --user option in docker exec command.",
     "rem-exec": "0"
 },{
     "id": "5.24",
     "desc": "5.24 Confirm cgroup usage (Scored)..168",
-    "aud-cmd": "",
-    "aud-desc": "",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CgroupParent={{.HostConfig.CgroupParent }}' | cut -d = -f2",
+    "aud-desc": "The above command would return the cgroup under which the containers are running. If it\r\nis blank, it means containers are running under default docker cgroup. In that case, this\r\nrecommendation is compliant. If the containers are found to be running under cgroup\r\nother than the one that was expected, this recommendation is non-compliant.",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Remediation:  Do not use --cgroup-parent option in docker run command unless needed",
     "rem-exec": "0"
 },{
     "id": "5.25",
     "desc": "5.25 Restrict container from acquiring additional privileges (Scored)",
-    "aud-cmd": "",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}' | grep no-new-privileges\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
     "rem-desc": "",
