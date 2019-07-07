@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html>
+<title>Report</title>
+
+<xmp theme="united" style="display:none;">
+## 1.1 Create a separate partition for containers (Scored)
+### Used command
+```
+if `grep /var/lib/docker /etc/fstab;` ; then echo "Ok"; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+
+---
+## 1.2 Harden the container host (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+
+
+---
+## 1.3 Keep Docker up to date (Not Scored)
+### Used command
+```
+echo $(docker version)
+```
+
+### Result
+
+```
+Client: Version: 18.09.7 API version: 1.39 Go version: go1.10.8 Git commit: 2d0083d Built: Thu Jun 27 17:56:23 2019 OS/Arch: linux/amd64 Experimental: false Server: Docker Engine - Community Engine: Version: 18.09.7 API version: 1.39 (minimum version 1.12) Go version: go1.10.8 Git commit: 2d0083d Built: Thu Jun 27 17:23:02 2019 OS/Arch: linux/amd64 Experimental: false
+
+
+```
+<br>
+
+
+---
+## 1.4 Only allow trusted users to control Docker daemon (Scored)
+### Used command
+```
+echo $(getent group docker)
+```
+
+### Result
+
+```
+docker:x:999:
+
+
+```
+<br>
+
+---
+## 1.5 Audit docker daemon (Scored 18)
+### Used command
+```
+if `auditctl -l | grep /usr/bin/docker;`; then echo "Ok"; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 1.6 Audit Docker files and directories - /var/lib/docker (Scored)
+### Used command
+```
+if `auditctl -l | grep /var/lib/docker;`; then echo "Ok"; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 1.7 Audit Docker files and directories - /etc/docker (Scored)
+### Used command
+```
+if `auditctl -l | grep /etc/docker;`; then echo "Ok"; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 1.8 Audit Docker files and directories - docker.service (Scored)
+### Used command
+```
+if `auditctl -l | grep docker.service ;`; then echo "Ok"; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 1.9 Audit Docker files and directories - docker.socket (Scored)
+### Used command
+```
+auditctl -l | grep docker.socket ;if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 1.10 Audit Docker files and directories - /etc/default/docker (Scored)
+### Used command
+```
+auditctl -l | grep /etc/default/docker ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 1.11 Audit Docker files and directories - /etc/docker/daemon.json (Scored)
+### Used command
+```
+auditctl -l | grep /etc/docker/daemon.json ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 1.12 Audit Docker files and directories - /usr/bin/docker-containerd (Scored)
+### Used command
+```
+auditctl -l | grep /usr/bin/docker-containerd ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 1.13 Audit Docker files and directories - /usr/bin/docker-runc (Scored)
+### Used command
+```
+auditctl -l | grep /usr/bin/docker-runc ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 2.1 Restrict network traffic between containers (Scored)
+### Used command
+```
+docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}';
+```
+
+### Result
+
+```
+bridge:map[com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true]
+host:map[]
+none:map[]
+
+
+```
+<br>
+<p> **It should return com.docker.network.bridge.enable_icc:false.** </p>
+
+---
+## 2.2 Set the logging level (Scored)
+### Used command
+```
+echo $(ps -ef | grep dockerd;) dockerd --log-level="info";
+```
+
+### Result
+
+```
+root 5092 1 0 Jul05 ? 00:01:15 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock root 26998 26996 0 20:33 pts/0 00:00:00 grep dockerd dockerd --log-level=info
+
+
+```
+<br>
+<p> Ensure that either the '--log-level' parameter is not present or if present, then it is set to 'info'. </p>
+
+---
+## 2.3 Allow Docker to make changes to iptables (Scored)
+### Used command
+```
+ps -ef | grep dockerd;if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+root      5092     1  0 Jul05 ?        00:01:15 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+root     27013 27011  0 20:33 pts/0    00:00:00 grep dockerd
+Ok
+
+
+```
+<br>
+
+---
+## 2.4 Do not use insecure registries (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep dockerd | grep insecure-registry ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+<p> Ensure that the '--insecure-registry' parameter is not present. </p>
+
+---
+## 2.5 Do not use the aufs storage driver (Scored)
+### Used command
+```
+echo $(docker info | grep -e "^Storage Driver:\s*aufs\s*$")
+```
+
+### Result
+
+```
+
+
+
+```
+<br>
+
+---
+## 2.6 Configure TLS authentication for Docker daemon (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep tlsverify ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi ; ps -ef | grep -v grep | grep tlscacert ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi ; ps -ef | grep -v grep| grep tlscert ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi ; ps -ef | grep -v grep| grep tlskey ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+Bad
+Bad
+Bad
+Ok
+
+
+```
+<br>
+
+---
+## 2.7 Set default ulimit as appropriate (Not Scored)
+### Used command
+```
+ps -ef | grep dockerd | grep -v grep | grep default-ulimit ;
+```
+
+### Result
+
+```
+
+
+```
+<br>
+<p> Ensure that the '--default-ulimit' parameter is set as appropriate. </p>
+
+---
+## 2.8 Enable user namespace support (Scored)
+### Used command
+```
+docker info --format '{{ .SecurityOptions }}' | grep userns;
+```
+
+### Result
+
+```
+
+
+```
+<br>
+<p> Ensure that the userns is listed under Security Options </p>
+
+---
+## 2.9 Confirm default cgroup usage (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep dockerd | grep cgroup-parent
+```
+
+### Result
+
+```
+
+
+```
+<br>
+<p> ** Ensure that the '--cgroup-parent' parameter is either not set or is set as appropriate nondefault cgroup. ** </p>
+
+---
+## 2.10 Do not change base device size until needed (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep dockerd | grep storage-opt ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi ; ps -ef | grep -v grep| grep dockerd | grep dm.basesize ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+Ok
+
+
+```
+<br>
+
+---
+## 2.11 Use authorization plugin (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep dockerd | grep authorization-plugin ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 2.12 Configure centralized and remote logging (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep dockerd | grep log-driver ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 2.13 Disable operations on legacy registry (v1) (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep dockerd | grep disable-legacy-registry ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi ; if [ "$1" == "-m" ]; then dockerd --disable-legacy-registry; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 2.14 Enable live restore (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep dockerd | grep live-restore ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 2.15 Do not enable swarm mode, if not needed (Scored)
+### Used command
+```
+docker info| grep -v grep| grep 'Swarm: inactive' ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Swarm: inactive
+Ok
+
+
+```
+<br>
+
+---
+## 2.16 Control the number of manager nodes in a swarm (Scored)
+### Used command
+```
+docker node ls | grep 'Leader'
+```
+
+### Result
+
+```
+
+
+```
+<br>
+
+---
+## 2.17 Bind swarm services to a specific host interface (Scored)
+### Used command
+```
+netstat -lt | grep -i 2377 ; if [ $? -ne 0 ]; then echo "It seems that Swarm mode NOT enabled" ; else echo "confirm that that each overlay network has been encrypted."; fi
+```
+
+### Result
+
+```
+It seems that Swarm mode NOT enabled
+
+
+```
+<br>
+
+---
+## 2.18 Disable Userland Proxy (Scored)
+### Used command
+```
+ps -ef | grep -v grep| grep dockerd | grep userland-proxy ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 2.19 Encrypt data exchanged between containers on different nodes on the overlay network (Scored)
+### Used command
+```
+docker network ls --filter driver=overlay --quiet ; if [ $? -ne 0 ]; then echo "It seems that Swarm mode NOT enabled" ; else echo "confirm that it is only listening on specific interfaces."; fi
+```
+
+### Result
+
+```
+confirm that it is only listening on specific interfaces.
+
+
+```
+<br>
+
+---
+## 2.20 Apply a daemon-wide custom seccomp profile, if needed (Not Scored)
+### Used command
+```
+docker info --format '{{ .SecurityOptions }}' | grep default ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+[name=apparmor name=seccomp,profile=default]
+Ok
+
+
+```
+<br>
+
+---
+## 2.21 Avoid experimental features in production (Scored)
+### Used command
+```
+docker version --format '{{ .Server.Experimental }}' ; if [ `docker version --format '{{ .Server.Experimental }}'` == false ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+false
+Ok
+
+
+```
+<br>
+
+---
+## 2.22 Use Docker's secret management commands for managing secrets in a Swarm cluster (Not Scored)
+### Used command
+```
+docker secret ls | grep 'not a swarm' ; if [ $? -eq 0 ]; then echo "not a swarm manager node" ; else echo "Follow docker secret documentation and use it to manage secrets effectively"; fi
+```
+
+### Result
+
+```
+Follow docker secret documentation and use it to manage secrets effectively
+
+
+```
+<br>
+
+---
+## 2.23 Run swarm manager in auto-lock mode (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> If it outputs the key, it means swarm was initialized with the -- ; autolock flag. If the output is no unlock key is set, it means that swarm was NOT ; initialized with the --autolock flag and is non-compliant with respect to this ; recommendation. </p>
+
+---
+## 2.24 Rotate swarm manager auto-lock key periodically (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> If it outputs the key, it means swarm was initialized with the -- ; autolock flag. If the output is no unlock key is set, it means that swarm was NOT ; initialized with the --autolock flag and is non-compliant with respect to this ; recommendation. </p>
+
+---
+## 3.1 Verify that docker.service file ownership is set to root:root (Scored)
+### Used command
+```
+export MYLOCATION=$(systemctl show -p FragmentPath docker.service | cut -d = -f2) ; stat -c %U:%G $MYLOCATION | grep -v root:root ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.2 Verify that docker.service file permissions are set to 644 or more restrictive (Scored)
+### Used command
+```
+stat -c %a $MYLOCATION ; if [[ $(stat -c %a $MYLOCATION) == 644 ]]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 3.3 Verify that docker.socket file ownership is set to root:root (Scored)
+### Used command
+```
+export SOCKET=$(systemctl show -p FragmentPath docker.socket | cut -d = -f2) ; stat -c %U:%G $SOCKET | grep -v root:root ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.4 Verify that docker.socket file permissions are set to 644 or more restrictive (Scored)
+### Used command
+```
+stat -c %a $SOCKET ; if [[ $(stat -c %a $SOCKET) == 644 ]]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 3.5 Verify that /etc/docker directory ownership is set to root:root (Scored)
+### Used command
+```
+stat -c %U:%G /etc/docker | grep -v root:root ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.6 Verify that /etc/docker directory permissions are set to 755 or more restrictive (Scored)
+### Used command
+```
+stat -c %a /etc/docker ; if [ $(stat -c %a /etc/docker) == 755 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+755
+Ok
+
+
+```
+<br>
+
+---
+## 3.7 Verify that registry certificate file ownership is set to root:root (Scored)
+### Used command
+```
+stat -c %U:%G /etc/docker/certs.d/* | grep -v root:root ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.8 Verify that registry certificate file permissions are set to 444 or more restrictive (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Execute the below command to verify that the registry certificate files have permissions of ; '444' or more restrictive: ; stat -c %a /etc/docker/certs.d/REGISTRY-NAME/* </p>
+
+---
+## 3.9 Verify that TLS CA certificate file ownership is set to root:root (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Execute the below command to verify that the TLS CA certificate file is owned and groupowned by 'root': ; stat -c %U:%G <path to TLS CA certificate file> | grep -v root:root ; The above command should not return anything. </p>
+
+---
+## 3.10 Verify that TLS CA certificate file permissions are set to 444 or more restrictive (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Execute the below command to verify that the TLS CA certificate file has permissions of ; '444' or more restrictive: ; stat -c %a <path to TLS CA certificate file> </p>
+
+---
+## 3.11 Verify that Docker server certificate file ownership is set to root:root (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Audit: ; Execute the below command to verify that the Docker server certificate file is owned and ; group-owned by 'root': ; stat -c %U:%G <path to Docker server certificate file> | grep -v root:root </p>
+
+---
+## 3.12 Verify that Docker server certificate file permissions are set to 444 or more restrictive (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Execute the below command to verify that the Docker server certificate file has ; permissions of '444' or more restrictive: ; stat -c %a <path to Docker server certificate file> </p>
+
+---
+## 3.13 Verify that Docker server certificate key file ownership is set to root:root (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Execute the below command to verify that the Docker server certificate key file is owned ; and group-owned by 'root': ; stat -c %U:%G <path to Docker server certificate key file> | grep -v root:root </p>
+
+---
+## 3.14 Verify that Docker server certificate key file permissions are set to 400 (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Execute the below command to verify that the Docker server certificate key file has ; permissions of '400': ; stat -c %a <path to Docker server certificate key file> </p>
+
+---
+## 3.15 Verify that Docker socket file ownership is set to root:docker (Scored)
+### Used command
+```
+stat -c %U:%G /var/run/docker.sock | grep -v root:docker ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.16 Verify that Docker socket file permissions are set to 660 or more restrictive (Scored)
+### Used command
+```
+if [ $(stat -c %a /var/run/docker.sock) = "660" ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.17 Verify that daemon.json file ownership is set to root:root (Scored)
+### Used command
+```
+stat -c %U:%G /etc/docker/daemon.json | grep -v root:root ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.18 Verify that daemon.json file permissions are set to 644 or more restrictive (Scored)
+### Used command
+```
+if [ $(stat -c %a /etc/docker/daemon.json)=="644" ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.19 Verify that /etc/default/docker file ownership is set to root:root (Scored)103
+### Used command
+```
+stat -c %U:%G /etc/default/docker | grep -v root:root ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 3.20 Verify that /etc/default/docker file permissions are set to 644 or more restrictive (Scored)
+### Used command
+```
+if [ $(stat -c %a /etc/default/docker) = "644" ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 4.1 Create a user for the container (Scored)
+### Used command
+```
+echo $(docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: User={{.Config.User }}')
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: User= 84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: User= 10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: User=
+
+
+```
+<br>
+
+---
+## 4.2 Use trusted base images for containers (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> This would list all the container images that are currently available for use on the Docker ; host. Interview the system administrator and obtain a proof of evidence that the list of ; images was obtained from trusted source over a secure channel. </p>
+
+---
+## 4.3 Do not install unnecessary packages in the container (Not Scored)
+### Used command
+```
+docker ps --quiet
+```
+
+### Result
+
+```
+9b6ee3462735
+
+
+```
+<br>
+<p> For each container instance, execute the below or equivalent command: ; docker exec INSTANCE_ID rpm -qa ; The above command would list the packages installed on the container. Review the list and ; ensure that it is legitimate. </p>
+
+---
+## 4.4 Scan and rebuild the images to include security patches (Not Scored)
+### Used command
+```
+docker ps --quiet
+```
+
+### Result
+
+```
+9b6ee3462735
+
+
+```
+<br>
+<p> For each container instance, execute the below or equivalent command to find the ; list of packages installed within the container. Ensure that the security updates for various ; affected packages are installed. ; docker exec INSTANCE_ID rpm -qa </p>
+
+---
+## 4.5 Enable Content trust for Docker (Scored)
+### Used command
+```
+if [[ $DOCKER_CONTENT_TRUST -eq 1 ]]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 4.6 Add HEALTHCHECK instruction to the container image (Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Run the below command and ensure that the docker image has appropriate HEALTHCHECK ; instruction set up. ; docker inspect --format='{{ .Config.Healthcheck }}' <IMAGE> </p>
+
+---
+## 4.7 Do not use update instructions alone in the Dockerfile (Not Scored)
+### Used command
+```
+docker images
+```
+
+### Result
+
+```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              4c108a37151f        2 weeks ago         64.2MB
+hello-world         latest              fce289e99eb9        6 months ago        1.84kB
+
+
+```
+<br>
+<p> Step 2: Run the below command for each image in the list above, and look for any update ; instructions being in a single line: ; docker history <Image_ID> </p>
+
+---
+## 4.8 Remove setuid and setgid permissions in the images (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Use update instructions along with install instructions (or any other) and version pinning ; for packages while installing them. This would bust the cache and force to extract the ; required versions. ; Alternatively, you could use --no-cache flag during docker build process to avoid using ; cached layers. </p>
+
+---
+## 4.9 Use COPY instead of ADD in Dockerfile (Not Scored)
+### Used command
+```
+docker images
+```
+
+### Result
+
+```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              4c108a37151f        2 weeks ago         64.2MB
+hello-world         latest              fce289e99eb9        6 months ago        1.84kB
+
+
+```
+<br>
+<p> Step 2: Run the below command for each image in the list above and look for any ADD ; instructions: ; docker history <Image_ID> </p>
+
+---
+## 4.10 Do not store secrets in Dockerfiles (Not Scored)
+### Used command
+```
+docker images
+```
+
+### Result
+
+```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              4c108a37151f        2 weeks ago         64.2MB
+hello-world         latest              fce289e99eb9        6 months ago        1.84kB
+
+
+```
+<br>
+<p> Run the below command for each image in the list above, and look for any secrets: ; docker history <Image_ID> ; Alternatively, if you have access to Dockerfile for the image, verify that there are no secrets ; as described above. </p>
+
+---
+## 4.11 Install verified packages only (Not Scored)
+### Used command
+```
+docker images
+```
+
+### Result
+
+```
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              4c108a37151f        2 weeks ago         64.2MB
+hello-world         latest              fce289e99eb9        6 months ago        1.84kB
+
+
+```
+<br>
+<p> Step 2: Run the below command for each image in the list above, and look for how ; the authenticity of the packages is determined. This could be via the use of GPG keys or ; other secure package distribution mechanisms ; docker history <Image_ID> </p>
+
+---
+## 5.1 Do not disable AppArmor Profile (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: AppArmorProfile={{.AppArmorProfile }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: AppArmorProfile=docker-default
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: AppArmorProfile=docker-default
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: AppArmorProfile=docker-default
+
+
+```
+<br>
+<p> The above command should return a valid AppArmor Profile for each container instance. </p>
+
+---
+## 5.2 Verify SELinux security options, if applicable (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: SecurityOpt=<no value>
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: SecurityOpt=<no value>
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: SecurityOpt=<no value>
+
+
+```
+<br>
+<p> The above command should return all the security options currently configured for the ; containers. </p>
+
+---
+## 5.3 Restrict Linux Kernel Capabilities within containers (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CapAdd={{.HostConfig.CapAdd }} CapDrop={{ .HostConfig.CapDrop }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: CapAdd=<no value> CapDrop=<no value>
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: CapAdd=<no value> CapDrop=<no value>
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: CapAdd=<no value> CapDrop=<no value>
+
+
+```
+<br>
+<p> Verify that the added and dropped Linux Kernel Capabilities are in line with the ones needed for container process for each container instance. </p>
+
+---
+## 5.4 Do not use privileged containers (Scored)
+### Used command
+```
+PTEST=$(docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Privileged={{.HostConfig.Privileged }}' | grep Privileged=true) ; if [[ -z $PTEST ]]; then echo "Ok"; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 5.5 Do not mount sensitive host system directories on containers (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Volumes={{ .Mounts}}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: Volumes=[]
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: Volumes=[]
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: Volumes=[]
+
+
+```
+<br>
+<p> The above commands would return the list of current mapped directories and whether ; they are mounted in read-write mode for each container instance. </p>
+
+---
+## 5.6 Do not run ssh within containers (Scored)
+### Used command
+```
+docker ps --quiet
+```
+
+### Result
+
+```
+9b6ee3462735
+
+
+```
+<br>
+<p> For each container instance, execute the below command: ; docker exec INSTANCE_ID ps -el ; Ensure that there is no process for SSH server. </p>
+
+---
+## 5.7 Do not map privileged ports within containers (Scored)
+### Used command
+```
+docker ps --quiet | xargs docker inspect --format '{{ .Id }}: Ports={{.NetworkSettings.Ports }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: Ports=map[]
+
+
+```
+<br>
+<p> Review the list and ensure that container ports are not mapped to host port numbers below 1024 </p>
+
+---
+## 5.8 Open only needed ports on container (Scored)...139
+### Used command
+```
+docker ps --quiet | xargs docker inspect --format '{{ .Id }}: Ports={{.NetworkSettings.Ports }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: Ports=map[]
+
+
+```
+<br>
+<p> Review the list and ensure that the ports mapped are the ones that are really needed for ; the container. </p>
+
+---
+## 5.9 Do not share the host's network namespace (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: NetworkMode={{.HostConfig.NetworkMode }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: NetworkMode=default
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: NetworkMode=default
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: NetworkMode=default
+
+
+```
+<br>
+<p> If the above command returns 'NetworkMode=host', it means '--net=host' option was ; passed when container was started. This would be non-compliant. It should return bridge, ; none, or container:\$Container_Instance to be compliant. </p>
+
+---
+## 5.10 Limit memory usage for container (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Memory={{.HostConfig.Memory }}' | grep Memory=0 ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: Memory=0
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: Memory=0
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: Memory=0
+Ok
+
+
+```
+<br>
+
+---
+## 5.11 Set container CPU priority appropriately (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CpuShares={{.HostConfig.CpuShares }}' | grep 'CpuShares=0\|CpuShares=1024' ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: CpuShares=0
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: CpuShares=0
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: CpuShares=0
+Bad
+
+
+```
+<br>
+
+---
+## 5.12 Mount container's root filesystem as read only (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: ReadonlyRootfs={{.HostConfig.ReadonlyRootfs }}' | grep ReadonlyRootfs=false ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: ReadonlyRootfs=false
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: ReadonlyRootfs=false
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: ReadonlyRootfs=false
+Bad
+
+
+```
+<br>
+
+---
+## 5.13 Bind incoming container traffic to a specific host interface (Scored)
+### Used command
+```
+docker ps --quiet | xargs docker inspect --format '{{ .Id }}: Ports={{.NetworkSettings.Ports }}' |grep 0.0.0.0 ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 5.14 Set the 'on-failure' container restart policy to 5 (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}:RestartPolicyName={{ .HostConfig.RestartPolicy.Name }} MaximumRetryCount={{.HostConfig.RestartPolicy.MaximumRetryCount }}' | grep RestartPolicyName=always ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 5.15 Do not share the host's process namespace (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: PidMode={{.HostConfig.PidMode }}' | grep host ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 5.16 Do not share the host's IPC namespace (Scored).154
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: IpcMode={{.HostConfig.IpcMode }}' | grep host ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 5.17 Do not directly expose host devices to containers (Not Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Devices={{.HostConfig.Devices }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: Devices=[]
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: Devices=[]
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: Devices=[]
+
+
+```
+<br>
+<p> The above command would list out each device with below information: ;  CgroupPermissions - For example, rwm ;  PathInContainer - Device path within the container ;  PathOnHost - Device path on the host ; Verify that the host device is needed to be accessed from within the container and the ; permissions required are correctly set. If the above command returns [], then the container ; does not have access to host devices. This recommendation can be assumed to be ; compliant. </p>
+
+---
+## 5.18 Override default ulimit at runtime only if needed (Not Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Ulimits={{.HostConfig.Ulimits }}' | grep 'Ulimits=<no value>' ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: Ulimits=<no value>
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: Ulimits=<no value>
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: Ulimits=<no value>
+Ok
+
+
+```
+<br>
+
+---
+## 5.19 Do not set mount propagation mode to shared (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}:Propagation={{range $mnt := .Mounts}} {{json $mnt.Propagation}} {{end}}' | grep shared ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 5.20 Do not share the host's UTS namespace (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: UTSMode={{.HostConfig.UTSMode }}' | grep host ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 5.21 Do not disable default seccomp profile (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: SecurityOpt=<no value>
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: SecurityOpt=<no value>
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: SecurityOpt=<no value>
+
+
+```
+<br>
+<p> The above command should return "<no value>" or your modified seccomp profile. If it ; returns [seccomp:unconfined], that means this recommendation is non-compliant and the ; container is running without any seccomp profiles. </p>
+
+---
+## 5.22 Do not docker exec commands with privileged option (Scored166
+### Used command
+```
+ausearch -k docker | grep exec | grep privileged ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 5.23 Do not docker exec commands with user option (Scored)
+### Used command
+```
+ausearch -k docker | grep exec | grep user ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 5.24 Confirm cgroup usage (Scored)..168
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CgroupParent={{.HostConfig.CgroupParent }}' | cut -d = -f2
+```
+
+### Result
+
+```
+
+
+
+
+
+```
+<br>
+<p> The above command would return the cgroup under which the containers are running. If it ; is blank, it means containers are running under default docker cgroup. In that case, this ; recommendation is compliant. If the containers are found to be running under cgroup ; other than the one that was expected, this recommendation is non-compliant. </p>
+
+---
+## 5.25 Restrict container from acquiring additional privileges (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}' | grep no-new-privileges ; if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Bad
+
+
+```
+<br>
+
+---
+## 5.26 Check container health at runtime (Scored)
+### Used command
+```
+docker ps --quiet | xargs sudo docker inspect --format '{{ .Id }}:Health={{ .State.Status }}'
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7:Health=running
+
+
+```
+<br>
+
+---
+## 5.27 Ensure docker commands always get the latest version of the image (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Step 1: Open your image repository and list the image version history for the image you ; are inspecting. ; Step 2: Observe the status when the docker pull command is triggered. ; If the status is shown as Image is up to date, it means that you are getting the cached ; version of the image. ; Step 3: Match the version of the image you are running with the latest version reported in ; your repository which tells if you are running the cached version or the latest copy </p>
+
+---
+## 5.28 Use PIDs cgroup limit (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: PidsLimit={{.HostConfig.PidsLimit }}' | grep PidsLimit=0 ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: PidsLimit=0
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: PidsLimit=0
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: PidsLimit=0
+Bad
+
+
+```
+<br>
+
+---
+## 5.29 Do not use Docker's default bridge docker0 (Not Scored)
+### Used command
+```
+docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}' | grep docker0 ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+bridge:map[com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true]
+Bad
+
+
+```
+<br>
+
+---
+## 5.30 Do not share the host's user namespaces (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: UsernsMode={{.HostConfig.UsernsMode }}' ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+9b6ee3462735180ca011b0d8878b243c5e39d1b91ada8e7efb837acf5c01f1b7: UsernsMode=
+84e28e8ecee4b666f7c581a9d5b390a91ac9613c717543c0e9774d59e4c203df: UsernsMode=
+10ebf0eb7e1758644cf186e8aa5df128c0ce9b296c491333b6a1a90d2c1bd031: UsernsMode=
+Bad
+
+
+```
+<br>
+
+---
+## 5.31 Do not mount the Docker socket inside any containers (Scored)
+### Used command
+```
+docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Volumes={{ .Mounts}}' | grep docker.sock ; if [ $? -ne 0 ]; then echo "Ok" ; else echo "Bad"; fi
+```
+
+### Result
+
+```
+Ok
+
+
+```
+<br>
+
+---
+## 6.1 Perform regular security audits of your host system and containers (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> docker stats $(docker ps --quiet) ; The above commands would return CPU, memory and network statistics for every running ; container. </p>
+
+---
+## 6.2 Monitor Docker containers usage, performance and metering (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+
+---
+## 6.3 Backup container data (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Ask the system administrator whether container data volumes are regularly backed up. ; Verify a copy of the backup and ensure that the organization's backup policy is followed. ; Additionally, you can execute the below command for each container instance to list the ; changed files and directories in the container᾿s filesystem. Ideally, nothing should be stored ; on container's filesystem. ; docker diff INSTANCE_ID </p>
+
+---
+## 6.4 Avoid image sprawl (Not Scored) 186
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Step 1 Make a list of all image IDs that are currently instantiated by executing below ; command: ; docker images --quiet | xargs docker inspect --format '{{ .Id }}: Image={{ ; .Config.Image }}' ; Step 2: List all the images present on the system by executing below command: ; docker images ; Step 3: Compare the list of image IDs populated from Step 1 and Step 2 and find out images ; that are currently not being instantiated. If any such unused or old images are found, ; discuss with the system administrator the need to keep such images on the system. If such ; a need is not justified enough, then this recommendation is non-compliant. </p>
+
+---
+## 6.5 Avoid container sprawl (Not Scored)
+### Used command
+No command
+
+### Result
+
+```
+NO output from command
+
+
+```
+<br>
+<p> Execute docker info to find the total number of containers you have on the host: ; docker info --format '{{ .Containers }}' ; Now, execute the below commands to find the total number of containers that are actually ; running or in the stopped state on the host. ; docker info --format '{{ .ContainersStopped }}' ; docker info --format '{{ .ContainersRunning }}' ; If the difference between the number of containers that are stopped on the host and the ; number of containers that are actually running on the host is large (say 25 or more), then ; perhaps, the containers are sprawled on the host. </p>
+
+---
+
+</xmp>
+
+<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</html>

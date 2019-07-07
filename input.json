@@ -3,7 +3,7 @@
     "desc": "1.1 Create a separate partition for containers (Scored)",
     "aud-cmd": "if  `grep /var/lib/docker /etc/fstab;`  ; then echo \"Ok\"; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "echo ok-cmd",
+    "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "1"
 },{
@@ -11,7 +11,7 @@
     "desc": "1.2 Harden the container host (Not Scored)",
     "aud-cmd": "",
     "aud-desc": "",
-    "rem-cmd": "echo ok-cmd",
+    "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "1"
 },{
@@ -19,7 +19,7 @@
     "desc": "1.3 Keep Docker up to date (Not Scored)",
     "aud-cmd": "echo $(docker version)",
     "aud-desc": "",
-    "rem-cmd": "echo ok-cmd",
+    "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "1"
 },{
@@ -106,7 +106,7 @@
     "id": "2.1",
     "desc": "2.1 Restrict network traffic between containers (Scored)",
     "aud-cmd": "docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}';",
-    "aud-desc": "##  It should return com.docker.network.bridge.enable_icc:false. ##",
+    "aud-desc": "**It should return com.docker.network.bridge.enable_icc:false.**",
     "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "0"
@@ -154,7 +154,7 @@
     "id": "2.7",
     "desc": "2.7 Set default ulimit as appropriate (Not Scored)",
     "aud-cmd": "ps -ef | grep dockerd | grep -v grep | grep default-ulimit ;",
-    "aud-desc": "# Ensure that the '--default-ulimit' parameter is set as appropriate.",
+    "aud-desc": "Ensure that the '--default-ulimit' parameter is set as appropriate.",
     "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "0"
@@ -162,7 +162,7 @@
     "id": "2.8",
     "desc": "2.8 Enable user namespace support (Scored)",
     "aud-cmd": "docker info --format '{{ .SecurityOptions }}' | grep userns;",
-    "aud-desc": "# ensure that the userns is listed under Security Options",
+    "aud-desc": "Ensure that the userns is listed under Security Options",
     "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "0"
@@ -170,25 +170,25 @@
     "id": "2.9",
     "desc": "2.9 Confirm default cgroup usage (Scored)",
     "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep cgroup-parent",
-    "aud-desc": "# Ensure that the '--cgroup-parent' parameter is either not set or is set as appropriate nondefault cgroup.",
+    "aud-desc": "** Ensure that the '--cgroup-parent' parameter is either not set or is set as appropriate nondefault cgroup. **",
     "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "2.10",
     "desc": "2.10 Do not change base device size until needed (Scored)",
-    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep storage-opt ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; ps -ef | grep -v grep| grep dockerd | grep dm.basesize ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; if [ \"$1\" == \"-m\" ]; then echo \" ## Do not set --storage-opt dm.basesize until needed\"; fi ; echo \"## 2.11 Use authorization plugin (Scored)\" ; ps -ef | grep -v grep| grep dockerd | grep authorization-plugin ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; if [ \"$1\" == \"-m\" ]; then echo\"Step 1: Install/Create an authorization plugin. ; Step 2: Configure the authorization policy as desired. ; Step 3: Start the docker daemon as below: ; dockerd --authorization-plugin=<PLUGIN_ID> /n\"; f",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep storage-opt ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; ps -ef | grep -v grep| grep dockerd | grep dm.basesize ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "",
+    "rem-desc": "Do not set --storage-opt dm.basesize until needed",
     "rem-exec": "0"
 },{
     "id": "2.11",
     "desc": "2.11 Use authorization plugin (Scored)",
-    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep authorization-plugin\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep authorization-plugin ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Step 1: Install/Create an authorization plugin.\r\nStep 2: Configure the authorization policy as desired.\r\nStep 3: Start the docker daemon as below:\r\ndockerd --authorization-plugin=<PLUGIN_ID> /n",
+    "rem-desc": "Step 1: Install/Create an authorization plugin. ; Step 2: Configure the authorization policy as desired. ; Step 3: Start the docker daemon as below: ; dockerd --authorization-plugin=<PLUGIN_ID> /n",
     "rem-exec": "0"
 },{
     "id": "2.12",
@@ -196,12 +196,12 @@
     "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep log-driver ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nStep 1: Setup the desired log driver by following its documentation.\r\nStep 2: Start the docker daemon with that logging driver.\r\nFor example,\r\ndockerd --log-driver=syslog --log-opt syslog-address=tcp://192.xxx.xxx.xxx",
+    "rem-desc": "Remediation: ; Step 1: Setup the desired log driver by following its documentation. ; Step 2: Start the docker daemon with that logging driver. ; For example, ; dockerd --log-driver=syslog --log-opt syslog-address=tcp://192.xxx.xxx.xxx",
     "rem-exec": "0"
 },{
     "id": "2.13",
     "desc": "2.13 Disable operations on legacy registry (v1) (Scored)",
-    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep disable-legacy-registry\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi\r\nif [ \"$1\" == \"-m\" ]; then dockerd --disable-legacy-registry; fi\r\necho \"## 2.14 Enable live restore (Scored)\"\r\nps -ef | grep -v grep| grep dockerd | grep live-restore\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep disable-legacy-registry ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ; if [ \"$1\" == \"-m\" ]; then dockerd --disable-legacy-registry; fi ",
     "aud-desc": "",
     "rem-cmd": "dockerd --disable-legacy-registry",
     "rem-desc": "",
@@ -209,7 +209,7 @@
 },{
     "id": "2.14",
     "desc": "2.14 Enable live restore (Scored)",
-    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep live-restore\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep live-restore ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "dockerd --live-restore",
     "rem-desc": "",
@@ -217,7 +217,7 @@
 },{
     "id": "2.15",
     "desc": "2.15 Do not enable swarm mode, if not needed (Scored)",
-    "aud-cmd": " docker info| grep -v grep| grep 'Swarm: inactive'\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": " docker info| grep -v grep| grep 'Swarm: inactive' ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "docker swarm leave",
     "rem-desc": "",
@@ -228,7 +228,7 @@
     "aud-cmd": "docker node ls | grep 'Leader'",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nIf an excessive number of managers is configured, the excess can be demoted as worker\r\nusing the following command:\r\ndocker node demote <ID>\r\nWhere <ID> is the node ID value of the manager to be demoted",
+    "rem-desc": "Remediation: ; If an excessive number of managers is configured, the excess can be demoted as worker ; using the following command: ; docker node demote <ID> ; Where <ID> is the node ID value of the manager to be demoted",
     "rem-exec": "0"
 },{
     "id": "2.17",
@@ -241,7 +241,7 @@
 },{
     "id": "2.18",
     "desc": "2.18 Disable Userland Proxy (Scored)",
-    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep userland-proxy\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "ps -ef | grep -v grep| grep dockerd | grep userland-proxy ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "if [ \"$1\" == \"-m\" ]; then echo \"Create overlay network with --opt encrypted flag.\"; fi",
     "rem-desc": "",
@@ -249,23 +249,23 @@
 },{
     "id": "2.19",
     "desc": "2.19 Encrypt data exchanged between containers on different nodes on the overlay network (Scored)",
-    "aud-cmd": "docker network ls --filter driver=overlay --quiet\r\nif [ $? -ne 0 ]; then echo \"It seems that Swarm mode NOT enabled\" ; else echo \"confirm that it is only listening on specific interfaces.\"; fi",
+    "aud-cmd": "docker network ls --filter driver=overlay --quiet ; if [ $? -ne 0 ]; then echo \"It seems that Swarm mode NOT enabled\" ; else echo \"confirm that it is only listening on specific interfaces.\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nCreate overlay network with --opt encrypted flag.",
+    "rem-desc": "Remediation: ; Create overlay network with --opt encrypted flag.",
     "rem-exec": "0"
 },{
     "id": "2.20",
     "desc": "2.20 Apply a daemon-wide custom seccomp profile, if needed (Not Scored)",
-    "aud-cmd": "docker info --format '{{ .SecurityOptions }}' | grep default\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker info --format '{{ .SecurityOptions }}' | grep default ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nBy default, Docker's default seccomp profile is applied. If this is good for your environment,\r\nno action is necessary. Alternatively, if you choose to apply your own seccomp profile, use\r\nthe --seccomp-profile flag at daemon start or put it in the daemon runtime parameters\r\nfile.\r\ndockerd --seccomp-profile </path/to/seccomp/profile>",
+    "rem-desc": "Remediation: ; By default, Docker's default seccomp profile is applied. If this is good for your environment, ; no action is necessary. Alternatively, if you choose to apply your own seccomp profile, use ; the --seccomp-profile flag at daemon start or put it in the daemon runtime parameters ; file. ; dockerd --seccomp-profile </path/to/seccomp/profile>",
     "rem-exec": "0"
 },{
     "id": "2.21",
     "desc": "2.21 Avoid experimental features in production (Scored)",
-    "aud-cmd": "docker version --format '{{ .Server.Experimental }}'\r\nif [ `docker version --format '{{ .Server.Experimental }}'` == false ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker version --format '{{ .Server.Experimental }}' ; if [ `docker version --format '{{ .Server.Experimental }}'` == false ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
     "rem-desc": "Do not pass --experimental as a runtime parameter to the docker daemon",
@@ -273,7 +273,7 @@
 },{
     "id": "2.22",
     "desc": "2.22 Use Docker's secret management commands for managing secrets in a Swarm cluster (Not Scored)",
-    "aud-cmd": "docker secret ls | grep 'not a swarm'\r\nif [ $? -eq 0 ]; then echo \"not a swarm manager node\" ; else echo \"Follow docker secret documentation and use it to manage secrets effectively\"; fi",
+    "aud-cmd": "docker secret ls | grep 'not a swarm' ; if [ $? -eq 0 ]; then echo \"not a swarm manager node\" ; else echo \"Follow docker secret documentation and use it to manage secrets effectively\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
     "rem-desc": "",
@@ -282,7 +282,7 @@
     "id": "2.23",
     "desc": "2.23 Run swarm manager in auto-lock mode (Scored)",
     "aud-cmd": "",
-    "aud-desc": "If it outputs the key, it means swarm was initialized with the --\r\nautolock flag. If the output is no unlock key is set, it means that swarm was NOT\r\ninitialized with the --autolock flag and is non-compliant with respect to this\r\nrecommendation.",
+    "aud-desc": "If it outputs the key, it means swarm was initialized with the -- ; autolock flag. If the output is no unlock key is set, it means that swarm was NOT ; initialized with the --autolock flag and is non-compliant with respect to this ; recommendation.",
     "rem-cmd": "confirm \"This will run swarm. proceed?\" && docker swarm unlock-key  ",
     "rem-desc": "",
     "rem-exec": "0"
@@ -290,14 +290,14 @@
     "id": "2.24",
     "desc": "2.24 Rotate swarm manager auto-lock key periodically (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "If it outputs the key, it means swarm was initialized with the --\r\nautolock flag. If the output is no unlock key is set, it means that swarm was NOT\r\ninitialized with the --autolock flag and is non-compliant with respect to this\r\nrecommendation.",
+    "aud-desc": "If it outputs the key, it means swarm was initialized with the -- ; autolock flag. If the output is no unlock key is set, it means that swarm was NOT ; initialized with the --autolock flag and is non-compliant with respect to this ; recommendation.",
     "rem-cmd": "docker swarm unlock-key --rotate",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.1",
     "desc": "3.1 Verify that docker.service file ownership is set to root:root (Scored)",
-    "aud-cmd": "export MYLOCATION=$(systemctl show -p FragmentPath docker.service | cut -d = -f2);\r\nstat -c %U:%G $MYLOCATION | grep -v root:root;\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "export MYLOCATION=$(systemctl show -p FragmentPath docker.service | cut -d = -f2) ; stat -c %U:%G $MYLOCATION | grep -v root:root ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "chown root:root $MYLOCATION",
     "rem-desc": "",
@@ -305,15 +305,15 @@
 },{
     "id": "3.2",
     "desc": "3.2 Verify that docker.service file permissions are set to 644 or more restrictive (Scored)",
-    "aud-cmd": "stat -c %a $MYLOCATION\r\nif [ $(stat -c %a $MYLOCATION) == 644 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "stat -c %a $MYLOCATION ; if [[ $(stat -c %a $MYLOCATION) == 644 ]]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
-    "rem-cmd": "if [ \"$1\" == \"-m\" ]; then chmod 644 $MYLOCATION; fi",
+    "rem-cmd": "if [[ \"$1\" == \"-m\" ]]; then chmod 644 $MYLOCATION; fi",
     "rem-desc": "",
     "rem-exec": "0"
 },{
     "id": "3.3",
     "desc": "3.3 Verify that docker.socket file ownership is set to root:root (Scored)",
-    "aud-cmd": "export SOCKET=$(systemctl show -p FragmentPath docker.socket | cut -d = -f2);\r\nstat -c %U:%G $SOCKET | grep -v root:root\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "export SOCKET=$(systemctl show -p FragmentPath docker.socket | cut -d = -f2) ; stat -c %U:%G $SOCKET | grep -v root:root ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "chown root:root $SOCKET",
     "rem-desc": "",
@@ -321,7 +321,7 @@
 },{
     "id": "3.4",
     "desc": "3.4 Verify that docker.socket file permissions are set to 644 or more restrictive (Scored)",
-    "aud-cmd": "stat -c %a $SOCKET\r\nif [ $(stat -c %a $SOCKET) == 644 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "stat -c %a $SOCKET ; if [[ $(stat -c %a $SOCKET) == 644 ]]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "chmod 644 $SOCKET",
     "rem-desc": "",
@@ -329,7 +329,7 @@
 },{
     "id": "3.5",
     "desc": "3.5 Verify that /etc/docker directory ownership is set to root:root (Scored)",
-    "aud-cmd": "stat -c %U:%G /etc/docker | grep -v root:root;\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "stat -c %U:%G /etc/docker | grep -v root:root ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "chown root:root /etc/docker",
     "rem-desc": "",
@@ -337,7 +337,7 @@
 },{
     "id": "3.6",
     "desc": "3.6 Verify that /etc/docker directory permissions are set to 755 or more restrictive (Scored)",
-    "aud-cmd": "stat -c %a /etc/docker;\r\nif [ $(stat -c %a /etc/docker) == 755 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "stat -c %a /etc/docker ; if [ $(stat -c %a /etc/docker) == 755 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "chmod 755 /etc/docker",
     "rem-desc": "",
@@ -345,7 +345,7 @@
 },{
     "id": "3.7",
     "desc": "3.7 Verify that registry certificate file ownership is set to root:root (Scored)",
-    "aud-cmd": "stat -c %U:%G /etc/docker/certs.d/* | grep -v root:root\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "stat -c %U:%G /etc/docker/certs.d/* | grep -v root:root ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
     "rem-desc": "Remediation: chown root:root /etc/docker/certs.d/<registry-name>/*",
@@ -354,7 +354,7 @@
     "id": "3.8",
     "desc": "3.8 Verify that registry certificate file permissions are set to 444 or more restrictive (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the registry certificate files have permissions of\r\n'444' or more restrictive:\r\nstat -c %a /etc/docker/certs.d/<registry-name>/*",
+    "aud-desc": "Execute the below command to verify that the registry certificate files have permissions of ; '444' or more restrictive: ; stat -c %a /etc/docker/certs.d/REGISTRY-NAME/*",
     "rem-cmd": "",
     "rem-desc": "Remediation: chmod 444 /etc/docker/certs.d/<registry-name>/*",
     "rem-exec": "0"
@@ -362,7 +362,7 @@
     "id": "3.9",
     "desc": "3.9 Verify that TLS CA certificate file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the TLS CA certificate file is owned and groupowned by 'root':\r\nstat -c %U:%G <path to TLS CA certificate file> | grep -v root:root\r\nThe above command should not return anything.",
+    "aud-desc": "Execute the below command to verify that the TLS CA certificate file is owned and groupowned by 'root': ; stat -c %U:%G <path to TLS CA certificate file> | grep -v root:root ; The above command should not return anything.",
     "rem-cmd": "",
     "rem-desc": "Remediation: chown root:root <path to TLS CA certificate file>",
     "rem-exec": "0"
@@ -370,7 +370,7 @@
     "id": "3.10",
     "desc": "3.10 Verify that TLS CA certificate file permissions are set to 444 or more restrictive (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the TLS CA certificate file has permissions of\r\n'444' or more restrictive:\r\nstat -c %a <path to TLS CA certificate file>",
+    "aud-desc": "Execute the below command to verify that the TLS CA certificate file has permissions of ; '444' or more restrictive: ; stat -c %a <path to TLS CA certificate file>",
     "rem-cmd": "",
     "rem-desc": "Remediation: chmod 444 <path to TLS CA certificate file>",
     "rem-exec": "0"
@@ -378,7 +378,7 @@
     "id": "3.11",
     "desc": "3.11 Verify that Docker server certificate file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Audit:\r\nExecute the below command to verify that the Docker server certificate file is owned and\r\ngroup-owned by 'root':\r\nstat -c %U:%G <path to Docker server certificate file> | grep -v root:root",
+    "aud-desc": "Audit: ; Execute the below command to verify that the Docker server certificate file is owned and ; group-owned by 'root': ; stat -c %U:%G <path to Docker server certificate file> | grep -v root:root",
     "rem-cmd": "",
     "rem-desc": "Remediation: chown root:root <path to Docker server certificate file>",
     "rem-exec": "0"
@@ -386,7 +386,7 @@
     "id": "3.12",
     "desc": "3.12 Verify that Docker server certificate file permissions are set to 444 or more restrictive (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the Docker server certificate file has\r\npermissions of '444' or more restrictive:\r\nstat -c %a <path to Docker server certificate file>",
+    "aud-desc": "Execute the below command to verify that the Docker server certificate file has ; permissions of '444' or more restrictive: ; stat -c %a <path to Docker server certificate file>",
     "rem-cmd": "",
     "rem-desc": "Remediation: chmod 444 <path to Docker server certificate file>",
     "rem-exec": "0"
@@ -394,7 +394,7 @@
     "id": "3.13",
     "desc": "3.13 Verify that Docker server certificate key file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the Docker server certificate key file is owned\r\nand group-owned by 'root':\r\nstat -c %U:%G <path to Docker server certificate key file> | grep -v root:root",
+    "aud-desc": "Execute the below command to verify that the Docker server certificate key file is owned ; and group-owned by 'root': ; stat -c %U:%G <path to Docker server certificate key file> | grep -v root:root",
     "rem-cmd": "",
     "rem-desc": "Remediation: chown root:root <path to Docker server certificate key file>",
     "rem-exec": "0"
@@ -402,14 +402,14 @@
     "id": "3.14",
     "desc": "3.14 Verify that Docker server certificate key file permissions are set to 400 (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the Docker server certificate key file has\r\npermissions of '400':\r\nstat -c %a <path to Docker server certificate key file>",
+    "aud-desc": "Execute the below command to verify that the Docker server certificate key file has ; permissions of '400': ; stat -c %a <path to Docker server certificate key file>",
     "rem-cmd": "",
     "rem-desc": "Remediation: chmod 400 <path to Docker server certificate key file>",
     "rem-exec": "0"
 },{
     "id": "3.15",
     "desc": "3.15 Verify that Docker socket file ownership is set to root:docker (Scored)",
-    "aud-cmd": "stat -c %U:%G /var/run/docker.sock | grep -v root:docker\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "stat -c %U:%G /var/run/docker.sock | grep -v root:docker ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "chown root:docker /var/run/docker.sock",
     "rem-desc": "",
@@ -425,7 +425,7 @@
 },{
     "id": "3.17",
     "desc": "3.17 Verify that daemon.json file ownership is set to root:root (Scored)",
-    "aud-cmd": "stat -c %U:%G /etc/docker/daemon.json | grep -v root:root\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "stat -c %U:%G /etc/docker/daemon.json | grep -v root:root ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "chown root:root /etc/docker/daemon.json",
     "rem-desc": "",
@@ -441,7 +441,7 @@
 },{
     "id": "3.19",
     "desc": "3.19 Verify that /etc/default/docker file ownership is set to root:root (Scored)103",
-    "aud-cmd": "stat -c %U:%G /etc/default/docker | grep -v root:root\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "stat -c %U:%G /etc/default/docker | grep -v root:root ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "chown root:root /etc/default/docker",
     "rem-desc": "",
@@ -460,13 +460,13 @@
     "aud-cmd": "echo $(docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: User={{.Config.User }}')",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nEnsure that the Dockerfile for the container image contains below instruction:\r\nUSER <username or ID>",
+    "rem-desc": "Remediation: ; Ensure that the Dockerfile for the container image contains below instruction: ; USER <username or ID>",
     "rem-exec": "0"
 },{
     "id": "4.2",
     "desc": "4.2 Use trusted base images for containers (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "This would list all the container images that are currently available for use on the Docker\r\nhost. Interview the system administrator and obtain a proof of evidence that the list of\r\nimages was obtained from trusted source over a secure channel.",
+    "aud-desc": "This would list all the container images that are currently available for use on the Docker ; host. Interview the system administrator and obtain a proof of evidence that the list of ; images was obtained from trusted source over a secure channel.",
     "rem-cmd": "",
     "rem-desc": "Configure and use Docker Content trust",
     "rem-exec": "0"
@@ -474,17 +474,17 @@
     "id": "4.3",
     "desc": "4.3 Do not install unnecessary packages in the container (Not Scored)",
     "aud-cmd": "docker ps --quiet",
-    "aud-desc": "For each container instance, execute the below or equivalent command:\r\ndocker exec INSTANCE_ID rpm -qa\r\nThe above command would list the packages installed on the container. Review the list and\r\nensure that it is legitimate.",
+    "aud-desc": "For each container instance, execute the below or equivalent command: ; docker exec INSTANCE_ID rpm -qa ; The above command would list the packages installed on the container. Review the list and ; ensure that it is legitimate.",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nAt the outset, do not install anything on the container that does not justify the purpose. If\r\nthe image had some packages that your container does not use, uninstall them.\r\nConsider using a minimal base image rather than the standard Redhat/Centos/Debian\r\nimages if you can. Some of the options include BusyBox and Alpine.\r\nNot only does this trim your image size from >150Mb to ~20 Mb, there are also fewer tools\r\nand paths to escalate privileges. You can even remove the package installer as a final\r\nhardening measure for leaf/production containers.",
+    "rem-desc": "Remediation: ; At the outset, do not install anything on the container that does not justify the purpose. If ; the image had some packages that your container does not use, uninstall them. ; Consider using a minimal base image rather than the standard Redhat/Centos/Debian ; images if you can. Some of the options include BusyBox and Alpine. ; Not only does this trim your image size from >150Mb to ~20 Mb, there are also fewer tools ; and paths to escalate privileges. You can even remove the package installer as a final ; hardening measure for leaf/production containers.",
     "rem-exec": "0"
 },{
     "id": "4.4",
     "desc": "4.4 Scan and rebuild the images to include security patches (Not Scored)",
     "aud-cmd": "docker ps --quiet",
-    "aud-desc": "For each container instance, execute the below or equivalent command to find the\r\nlist of packages installed within the container. Ensure that the security updates for various\r\naffected packages are installed.\r\ndocker exec INSTANCE_ID rpm -qa",
+    "aud-desc": "For each container instance, execute the below or equivalent command to find the ; list of packages installed within the container. Ensure that the security updates for various ; affected packages are installed. ; docker exec INSTANCE_ID rpm -qa",
     "rem-cmd": "",
-    "rem-desc": "Step 1: 'docker pull' all the base images (i.e., given your set of Dockerfiles, extract all\r\nimages declared in 'FROM' instructions, and re-pull them to check for an updated/patched\r\nversions). Patch the packages within the images too.\r\nStep 2: Force a rebuild of each image with 'docker build --no-cache'.\r\nStep 3: Restart all containers with the updated images.\r\nYou could also use ONBUILD directive in the Dockerfile to trigger particular update\r\ninstructions for images that you know are used as base images frequently.",
+    "rem-desc": "Step 1: 'docker pull' all the base images (i.e., given your set of Dockerfiles, extract all ; images declared in 'FROM' instructions, and re-pull them to check for an updated/patched ; versions). Patch the packages within the images too. ; Step 2: Force a rebuild of each image with 'docker build --no-cache'. ; Step 3: Restart all containers with the updated images. ; You could also use ONBUILD directive in the Dockerfile to trigger particular update ; instructions for images that you know are used as base images frequently.",
     "rem-exec": "0"
 },{
     "id": "4.5",
@@ -498,23 +498,23 @@
     "id": "4.6",
     "desc": "4.6 Add HEALTHCHECK instruction to the container image (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Run the below command and ensure that the docker image has appropriate HEALTHCHECK\r\ninstruction set up.\r\ndocker inspect --format='{{ .Config.Healthcheck }}' <IMAGE>",
+    "aud-desc": "Run the below command and ensure that the docker image has appropriate HEALTHCHECK ; instruction set up. ; docker inspect --format='{{ .Config.Healthcheck }}' <IMAGE>",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nFollow Docker documentation and rebuild your container image with HEALTHCHECK\r\ninstruction.",
+    "rem-desc": "Remediation: ; Follow Docker documentation and rebuild your container image with HEALTHCHECK ; instruction.",
     "rem-exec": "0"
 },{
     "id": "4.7",
     "desc": "4.7 Do not use update instructions alone in the Dockerfile (Not Scored)",
     "aud-cmd": "docker images",
-    "aud-desc": "Step 2: Run the below command for each image in the list above, and look for any update\r\ninstructions being in a single line:\r\ndocker history <Image_ID>",
+    "aud-desc": "Step 2: Run the below command for each image in the list above, and look for any update ; instructions being in a single line: ; docker history <Image_ID>",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nUse update instructions along with install instructions (or any other) and version pinning\r\nfor packages while installing them. This would bust the cache and force to extract the\r\nrequired versions.\r\nAlternatively, you could use --no-cache flag during docker build process to avoid using\r\ncached layers.",
+    "rem-desc": "Remediation: ; Use update instructions along with install instructions (or any other) and version pinning ; for packages while installing them. This would bust the cache and force to extract the ; required versions. ; Alternatively, you could use --no-cache flag during docker build process to avoid using ; cached layers.",
     "rem-exec": "0"
 },{
     "id": "4.8",
     "desc": "4.8 Remove setuid and setgid permissions in the images (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "Use update instructions along with install instructions (or any other) and version pinning\r\nfor packages while installing them. This would bust the cache and force to extract the\r\nrequired versions.\r\nAlternatively, you could use --no-cache flag during docker build process to avoid using\r\ncached layers.",
+    "aud-desc": "Use update instructions along with install instructions (or any other) and version pinning ; for packages while installing them. This would bust the cache and force to extract the ; required versions. ; Alternatively, you could use --no-cache flag during docker build process to avoid using ; cached layers.",
     "rem-cmd": "if [ \"$1\" == \"-m\" ]; then RUN find / -perm +6000 -type f -exec chmod a-s {} ; || true; fi",
     "rem-desc": "",
     "rem-exec": "0"
@@ -522,7 +522,7 @@
     "id": "4.9",
     "desc": "4.9 Use COPY instead of ADD in Dockerfile (Not Scored)",
     "aud-cmd": "docker images",
-    "aud-desc": "Step 2: Run the below command for each image in the list above and look for any ADD\r\ninstructions:\r\ndocker history <Image_ID>",
+    "aud-desc": "Step 2: Run the below command for each image in the list above and look for any ADD ; instructions: ; docker history <Image_ID>",
     "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "0"
@@ -530,7 +530,7 @@
     "id": "4.10",
     "desc": "4.10 Do not store secrets in Dockerfiles (Not Scored)",
     "aud-cmd": "docker images",
-    "aud-desc": "Run the below command for each image in the list above, and look for any secrets:\r\ndocker history <Image_ID>\r\nAlternatively, if you have access to Dockerfile for the image, verify that there are no secrets\r\nas described above.",
+    "aud-desc": "Run the below command for each image in the list above, and look for any secrets: ; docker history <Image_ID> ; Alternatively, if you have access to Dockerfile for the image, verify that there are no secrets ; as described above.",
     "rem-cmd": "",
     "rem-desc": "Remediation: Do not store any kind of secrets within Dockerfiles.",
     "rem-exec": "0"
@@ -538,9 +538,9 @@
     "id": "4.11",
     "desc": "4.11 Install verified packages only (Not Scored)",
     "aud-cmd": "docker images",
-    "aud-desc": "Step 2: Run the below command for each image in the list above, and look for how\r\nthe authenticity of the packages is determined. This could be via the use of GPG keys or\r\nother secure package distribution mechanisms\r\ndocker history <Image_ID>",
+    "aud-desc": "Step 2: Run the below command for each image in the list above, and look for how ; the authenticity of the packages is determined. This could be via the use of GPG keys or ; other secure package distribution mechanisms ; docker history <Image_ID>",
     "rem-cmd": "",
-    "rem-desc": "Remediation: Use GPG keys for downloading and verifying packages or any other secure package\r\ndistribution mechanism of your choice.",
+    "rem-desc": "Remediation: Use GPG keys for downloading and verifying packages or any other secure package ; distribution mechanism of your choice.",
     "rem-exec": "0"
 },{
     "id": "5.1",
@@ -548,14 +548,14 @@
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: AppArmorProfile={{.AppArmorProfile }}'",
     "aud-desc": "The above command should return a valid AppArmor Profile for each container instance.",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nIf AppArmor is applicable for your Linux OS, use it. You may have to follow below set of\r\nsteps:\r\n1. Verify if AppArmor is installed. If not, install it.\r\n2. Create or import a AppArmor profile for Docker containers.\r\n3. Put this profile in enforcing mode.\r\n4. Start your Docker container using the customized AppArmor profile. For example,\r\ndocker run --interactive --tty --security-opt=\"apparmor:PROFILENAME\" centos /bin/bash\r\nAlternatively, you can keep the docker's default apparmor profile",
+    "rem-desc": "Remediation: ; If AppArmor is applicable for your Linux OS, use it. You may have to follow below set of ; steps: ; 1. Verify if AppArmor is installed. If not, install it. ; 2. Create or import a AppArmor profile for Docker containers. ; 3. Put this profile in enforcing mode. ; 4. Start your Docker container using the customized AppArmor profile. For example, ; docker run --interactive --tty --security-opt=\"apparmor:PROFILENAME\" centos /bin/bash ; Alternatively, you can keep the docker's default apparmor profile",
     "rem-exec": "0"
 },{
     "id": "5.2",
     "desc": "5.2 Verify SELinux security options, if applicable (Scored)",
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}'",
-    "aud-desc": "The above command should return all the security options currently configured for the\r\ncontainers.",
-    "rem-cmd": "Remediation:\r\nIf SELinux is applicable for your Linux OS, use it. You may have to follow below set of steps:\r\n1. Set the SELinux State.\r\n2. Set the SELinux Policy.\r\n3. Create or import a SELinux policy template for Docker containers.\r\n4. Start Docker in daemon mode with SELinux enabled. For example,\r\ndocker daemon --selinux-enabled\r\n5. Start your Docker container using the security options. For example,\r\ndocker run --interactive --tty --security-opt label=level:TopSecret centos\r\n\/bin\/bash\r\nI",
+    "aud-desc": "The above command should return all the security options currently configured for the ; containers.",
+    "rem-cmd": "Remediation: ; If SELinux is applicable for your Linux OS, use it. You may have to follow below set of steps: ; 1. Set the SELinux State. ; 2. Set the SELinux Policy. ; 3. Create or import a SELinux policy template for Docker containers. ; 4. Start Docker in daemon mode with SELinux enabled. For example, ; docker daemon --selinux-enabled ; 5. Start your Docker container using the security options. For example, ; docker run --interactive --tty --security-opt label=level:TopSecret centos ; \/bin\/bash ; I",
     "rem-desc": "",
     "rem-exec": "0"
 },{
@@ -564,21 +564,21 @@
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CapAdd={{.HostConfig.CapAdd }} CapDrop={{ .HostConfig.CapDrop }}'",
     "aud-desc": "Verify that the added and dropped Linux Kernel Capabilities are in line with the ones needed for container process for each container instance.",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nExecute the below command to add needed capabilities:\r\n$> docker run --cap-add={\"Capability 1\",\"Capability 2\"} <Run arguments> <Container\r\nImage Name or ID> <Command>\r\nFor example,\r\ndocker run --interactive --tty --cap-add={\"NET_ADMIN\",\"SYS_ADMIN\"} centos:latest\r\n/bin/bash\r\nExecute the below command to drop unneeded capabilities:131 | P a g e\r\n$> docker run --cap-drop={\"Capability 1\",\"Capability 2\"} <Run arguments> <Container\r\nImage Name or ID> <Command>\r\nFor example,\r\ndocker run --interactive --tty --cap-drop={\"SETUID\",\"SETGID\"} centos:latest /bin/bash\r\nAlternatively,\r\nYou may choose to drop all capabilities and add only add the needed ones:\r\n$> docker run --cap-drop=all --cap-add={\"Capability 1\",\"Capability 2\"} <Run arguments>\r\n<Container Image Name or ID> <Command>\r\nFor example,\r\ndocker run --interactive --tty --cap-drop=all --cap-add={\"NET_ADMIN\",\"SYS_ADMIN\"}\r\ncentos:latest /bin/bash\r\n",
+    "rem-desc": "Remediation: ; Execute the below command to add needed capabilities: ; $> docker run --cap-add={\"Capability 1\",\"Capability 2\"} <Run arguments> <Container ; Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-add={\"NET_ADMIN\",\"SYS_ADMIN\"} centos:latest ; /bin/bash ; Execute the below command to drop unneeded capabilities:131 | P a g e ; $> docker run --cap-drop={\"Capability 1\",\"Capability 2\"} <Run arguments> <Container ; Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-drop={\"SETUID\",\"SETGID\"} centos:latest /bin/bash ; Alternatively, ; You may choose to drop all capabilities and add only add the needed ones: ; $> docker run --cap-drop=all --cap-add={\"Capability 1\",\"Capability 2\"} <Run arguments> ; <Container Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-drop=all --cap-add={\"NET_ADMIN\",\"SYS_ADMIN\"} ; centos:latest /bin/bash ; ",
     "rem-exec": "0"
 },{
     "id": "5.4",
     "desc": "5.4 Do not use privileged containers (Scored)",
-    "aud-cmd": "PTEST=$(docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Privileged={{.HostConfig.Privileged }}' | grep Privileged=true)\r\nif [[ -z $PTEST ]]; then echo \"Ok\"; else echo \"Bad\"; fi",
+    "aud-cmd": "PTEST=$(docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Privileged={{.HostConfig.Privileged }}' | grep Privileged=true) ; if [[ -z $PTEST ]]; then echo \"Ok\"; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Do not run container with the --privileged flag.\r\nFor example, do not start a container as below:\r\ndocker run --interactive --tty --privileged centos \/bin\/bash",
+    "rem-desc": "Do not run container with the --privileged flag. ; For example, do not start a container as below: ; docker run --interactive --tty --privileged centos \/bin\/bash",
     "rem-exec": "0"
 },{
     "id": "5.5",
     "desc": "5.5 Do not mount sensitive host system directories on containers (Scored)",
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Volumes={{ .Mounts}}'",
-    "aud-desc": "The above commands would return the list of current mapped directories and whether\r\nthey are mounted in read-write mode for each container instance.",
+    "aud-desc": "The above commands would return the list of current mapped directories and whether ; they are mounted in read-write mode for each container instance.",
     "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "0"
@@ -586,9 +586,9 @@
     "id": "5.6",
     "desc": "5.6 Do not run ssh within containers (Scored)",
     "aud-cmd": "docker ps --quiet",
-    "aud-desc": "For each container instance, execute the below command:\r\ndocker exec INSTANCE_ID ps -el\r\nEnsure that there is no process for SSH server.",
+    "aud-desc": "For each container instance, execute the below command: ; docker exec INSTANCE_ID ps -el ; Ensure that there is no process for SSH server.",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nUninstall SSH server from the container and use nsenter or any other commands such as\r\ndocker exec or docker attach to interact with the container instance.\r\ndocker exec --interactive --tty INSTANCE_ID sh\r\nOR\r\ndocker attach INSTANCE_ID",
+    "rem-desc": "Remediation: ; Uninstall SSH server from the container and use nsenter or any other commands such as ; docker exec or docker attach to interact with the container instance. ; docker exec --interactive --tty INSTANCE_ID sh ; OR ; docker attach INSTANCE_ID",
     "rem-exec": "0"
 },{
     "id": "5.7",
@@ -596,151 +596,151 @@
     "aud-cmd": "docker ps --quiet | xargs docker inspect --format '{{ .Id }}: Ports={{.NetworkSettings.Ports }}'",
     "aud-desc": "Review the list and ensure that container ports are not mapped to host port numbers below 1024",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nDo not map the container ports to privileged host ports when starting a container. Also,\r\nensure that there is no such container to host privileged port mapping declarations in the\r\nDockerfile.",
+    "rem-desc": "Remediation: ; Do not map the container ports to privileged host ports when starting a container. Also, ; ensure that there is no such container to host privileged port mapping declarations in the ; Dockerfile.",
     "rem-exec": "0"
 },{
     "id": "5.8",
     "desc": "5.8 Open only needed ports on container (Scored)...139",
     "aud-cmd": "docker ps --quiet | xargs docker inspect --format '{{ .Id }}: Ports={{.NetworkSettings.Ports }}'",
-    "aud-desc": "Review the list and ensure that the ports mapped are the ones that are really needed for\r\nthe container.",
+    "aud-desc": "Review the list and ensure that the ports mapped are the ones that are really needed for ; the container.",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nFix the Dockerfile of the container image to expose only needed ports by your\r\ncontainerized application. You can also completely ignore the list of ports defined in the\r\nDockerfile by NOT using '-P' (UPPERCASE) or '--publish-all' flag when starting the\r\ncontainer. Use the '-p' (lowercase) or '--publish' flag to explicitly define the ports that\r\nyou need for a particular container instance.\r\nFor example,\r\ndocker run --interactive --tty --publish 5000 --publish 5001 --publish 5002 centos\r\n/bin/bash",
+    "rem-desc": "Remediation: ; Fix the Dockerfile of the container image to expose only needed ports by your ; containerized application. You can also completely ignore the list of ports defined in the ; Dockerfile by NOT using '-P' (UPPERCASE) or '--publish-all' flag when starting the ; container. Use the '-p' (lowercase) or '--publish' flag to explicitly define the ports that ; you need for a particular container instance. ; For example, ; docker run --interactive --tty --publish 5000 --publish 5001 --publish 5002 centos ; /bin/bash",
     "rem-exec": "0"
 },{
     "id": "5.9",
     "desc": "5.9 Do not share the host's network namespace (Scored)",
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: NetworkMode={{.HostConfig.NetworkMode }}'",
-    "aud-desc": "If the above command returns 'NetworkMode=host', it means '--net=host' option was\r\npassed when container was started. This would be non-compliant. It should return bridge,\r\nnone, or container:\\$Container_Instance to be compliant.",
+    "aud-desc": "If the above command returns 'NetworkMode=host', it means '--net=host' option was ; passed when container was started. This would be non-compliant. It should return bridge, ; none, or container:\\$Container_Instance to be compliant.",
     "rem-cmd": "",
     "rem-desc": "Do not pass '--net=host' option when starting the container",
     "rem-exec": "0"
 },{
     "id": "5.10",
     "desc": "5.10 Limit memory usage for container (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Memory={{.HostConfig.Memory }}' |  grep Memory=0\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Memory={{.HostConfig.Memory }}' |  grep Memory=0 ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nRun the container with only as much memory as required. Always run the container using\r\nthe '--memory' argument. You should start the container as below:\r\n$> docker run <Run arguments> --memory <memory-size> <Container Image Name or ID>\r\n<Command>\r\nFor example,\r\ndocker run --interactive --tty --memory 256m centos /bin/bash\r\nIn the above example, the container is started with a memory limit of 256 MB.\r\nNote: Please note that the output of the below command would return values in scientific\r\nnotation if memory limits are in place.\r\ndocker inspect --format='{{.Config.Memory}}' 7c5a2d4c7fe0 \r\nFor example, if the memory limit is set to 256 MB for the above container instance, the\r\noutput of the above command would be 2.68435456e+08 and NOT 256m. You should\r\nconvert this value using a scientific calculator or programmatic methods.",
+    "rem-desc": "Remediation: ; Run the container with only as much memory as required. Always run the container using ; the '--memory' argument. You should start the container as below: ; $> docker run <Run arguments> --memory <memory-size> <Container Image Name or ID> ; <Command> ; For example, ; docker run --interactive --tty --memory 256m centos /bin/bash ; In the above example, the container is started with a memory limit of 256 MB. ; Note: Please note that the output of the below command would return values in scientific ; notation if memory limits are in place. ; docker inspect --format='{{.Config.Memory}}' 7c5a2d4c7fe0  ; For example, if the memory limit is set to 256 MB for the above container instance, the ; output of the above command would be 2.68435456e+08 and NOT 256m. You should ; convert this value using a scientific calculator or programmatic methods.",
     "rem-exec": "0"
 },{
     "id": "5.11",
     "desc": "5.11 Set container CPU priority appropriately (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CpuShares={{.HostConfig.CpuShares }}' | grep 'CpuShares=0\\|CpuShares=1024'\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CpuShares={{.HostConfig.CpuShares }}' | grep 'CpuShares=0\\|CpuShares=1024' ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nManage the CPU shares between your containers. To do so start the container using the '--\r\ncpu-shares' argument. You may start the container as below:\r\n$> docker run <Run arguments> --cpu-shares <CPU shares> <Container Image Name or\r\nID> <Command>\r\nFor example,\r\ndocker run --interactive --tty --cpu-shares 512 centos /bin/bash\r\nIn the above example, the container is started with a CPU shares of 50% of what the other\r\ncontainers use. So, if the other container has CPU shares of 80%, this container will have\r\nCPU shares of 40%.145 | P a g e\r\nNote: Every new container will have 1024 shares of CPU by default. However, this value is\r\nshown as '0' if you run the command mentioned in the audit section.\r\nAlternatively,\r\n1. Navigate to /sys/fs/cgroup/cpu/system.slice/ directory.\r\n2. Check your container instance ID using 'docker ps' command.\r\n3. Now, inside the above directory (in step 1), you would have a directory by name\r\n'docker-<Instance ID>.scope' for example 'docker-\r\n4acae729e8659c6be696ee35b2237cc1fe4edd2672e9186434c5116e1a6fbed6.scope'.\r\nNavigate to this directory.\r\n4. You will find a file named 'cpu.shares'. Execute 'cat cpu.shares'. This will always\r\ngive you the CPU share value based on the system. So, even if there are no CPU\r\nshares configured using '-c' or '--cpu-shares' argument in the 'docker run'\r\ncommand, this file will have a value of '1024'.\r\nIf we set one container’s CPU shares to 512 it will receive half of the CPU time compared to\r\nthe other container. So, take 1024 as 100% and then do quick math to derive the number\r\nthat you should set for respective CPU shares. For example, use 512 if you want to set 50%\r\nand 256 if you want to set 25%.",
+    "rem-desc": "Remediation: ; Manage the CPU shares between your containers. To do so start the container using the '-- ; cpu-shares' argument. You may start the container as below: ; $> docker run <Run arguments> --cpu-shares <CPU shares> <Container Image Name or ; ID> <Command> ; For example, ; docker run --interactive --tty --cpu-shares 512 centos /bin/bash ; In the above example, the container is started with a CPU shares of 50% of what the other ; containers use. So, if the other container has CPU shares of 80%, this container will have ; CPU shares of 40%.145 | P a g e ; Note: Every new container will have 1024 shares of CPU by default. However, this value is ; shown as '0' if you run the command mentioned in the audit section. ; Alternatively, ; 1. Navigate to /sys/fs/cgroup/cpu/system.slice/ directory. ; 2. Check your container instance ID using 'docker ps' command. ; 3. Now, inside the above directory (in step 1), you would have a directory by name ; 'docker-<Instance ID>.scope' for example 'docker- ; 4acae729e8659c6be696ee35b2237cc1fe4edd2672e9186434c5116e1a6fbed6.scope'. ; Navigate to this directory. ; 4. You will find a file named 'cpu.shares'. Execute 'cat cpu.shares'. This will always ; give you the CPU share value based on the system. So, even if there are no CPU ; shares configured using '-c' or '--cpu-shares' argument in the 'docker run' ; command, this file will have a value of '1024'. ; If we set one container’s CPU shares to 512 it will receive half of the CPU time compared to ; the other container. So, take 1024 as 100% and then do quick math to derive the number ; that you should set for respective CPU shares. For example, use 512 if you want to set 50% ; and 256 if you want to set 25%.",
     "rem-exec": "0"
 },{
     "id": "5.12",
     "desc": "5.12 Mount container's root filesystem as read only (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: ReadonlyRootfs={{.HostConfig.ReadonlyRootfs }}' | grep ReadonlyRootfs=false\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: ReadonlyRootfs={{.HostConfig.ReadonlyRootfs }}' | grep ReadonlyRootfs=false ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nAdd a '--read-only' flag to allow the container's root filesystem to be mounted as read\r\nonly. This can be used in combination with volumes to force a container's process to only\r\nwrite to locations that will be persisted.\r\nYou should run the container as below:\r\n$> docker run <Run arguments> --read-only -v <writable-volume> <Container Image Name\r\nor ID> <Command>\r\nFor example,\r\ndocker run --interactive --tty --read-only --volume /centdata centos /bin/bash\r\nThis would run the container with read-only root filesystem and would use 'centdata' as\r\ncontainer volume for writing",
+    "rem-desc": "Remediation: ; Add a '--read-only' flag to allow the container's root filesystem to be mounted as read ; only. This can be used in combination with volumes to force a container's process to only ; write to locations that will be persisted. ; You should run the container as below: ; $> docker run <Run arguments> --read-only -v <writable-volume> <Container Image Name ; or ID> <Command> ; For example, ; docker run --interactive --tty --read-only --volume /centdata centos /bin/bash ; This would run the container with read-only root filesystem and would use 'centdata' as ; container volume for writing",
     "rem-exec": "0"
 },{
     "id": "5.13",
     "desc": "5.13 Bind incoming container traffic to a specific host interface (Scored)",
-    "aud-cmd": "docker ps --quiet | xargs docker inspect --format '{{ .Id }}: Ports={{.NetworkSettings.Ports }}' |grep 0.0.0.0\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet | xargs docker inspect --format '{{ .Id }}: Ports={{.NetworkSettings.Ports }}' |grep 0.0.0.0 ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nBind the container port to a specific host interface on the desired host port.\r\nFor example,\r\ndocker run --detach --publish 10.2.3.4:49153:80 nginx\r\nIn the example above, the container port 80 is bound to the host port on 49153 and would\r\naccept incoming connection only from 10.2.3.4 external interface.",
+    "rem-desc": "Remediation: ; Bind the container port to a specific host interface on the desired host port. ; For example, ; docker run --detach --publish 10.2.3.4:49153:80 nginx ; In the example above, the container port 80 is bound to the host port on 49153 and would ; accept incoming connection only from 10.2.3.4 external interface.",
     "rem-exec": "0"
 },{
     "id": "5.14",
     "desc": "5.14 Set the 'on-failure' container restart policy to 5 (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}:RestartPolicyName={{ .HostConfig.RestartPolicy.Name }} MaximumRetryCount={{.HostConfig.RestartPolicy.MaximumRetryCount }}' | grep RestartPolicyName=always\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}:RestartPolicyName={{ .HostConfig.RestartPolicy.Name }} MaximumRetryCount={{.HostConfig.RestartPolicy.MaximumRetryCount }}' | grep RestartPolicyName=always ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nIf a container is desired to be restarted of its own, then start the container as below:\r\n$> docker run <Run arguments> --restart=on-failure:5 <Container Image Name or ID>\r\n<Command> \r\nFor example,\r\ndocker run --detach --restart=on-failure:5 nginx",
+    "rem-desc": "Remediation: ; If a container is desired to be restarted of its own, then start the container as below: ; $> docker run <Run arguments> --restart=on-failure:5 <Container Image Name or ID> ; <Command>  ; For example, ; docker run --detach --restart=on-failure:5 nginx",
     "rem-exec": "0"
 },{
     "id": "5.15",
     "desc": "5.15 Do not share the host's process namespace (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: PidMode={{.HostConfig.PidMode }}' | grep host\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: PidMode={{.HostConfig.PidMode }}' | grep host ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nDo not start a container with '--pid=host' argument.\r\nFor example, do not start a container as below:\r\ndocker run --interactive --tty --pid=host centos /bin/bash",
+    "rem-desc": "Remediation: ; Do not start a container with '--pid=host' argument. ; For example, do not start a container as below: ; docker run --interactive --tty --pid=host centos /bin/bash",
     "rem-exec": "0"
 },{
     "id": "5.16",
     "desc": "5.16 Do not share the host's IPC namespace (Scored).154",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: IpcMode={{.HostConfig.IpcMode }}' | grep host\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: IpcMode={{.HostConfig.IpcMode }}' | grep host ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Do not start a container with '--ipc=host' argument.\r\nFor example, do not start a container as below:\r\ndocker run --interactive --tty --ipc=host centos /bin/bash",
+    "rem-desc": "Do not start a container with '--ipc=host' argument. ; For example, do not start a container as below: ; docker run --interactive --tty --ipc=host centos /bin/bash",
     "rem-exec": "0"
 },{
     "id": "5.17",
     "desc": "5.17 Do not directly expose host devices to containers (Not Scored)",
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Devices={{.HostConfig.Devices }}'",
-    "aud-desc": "The above command would list out each device with below information:\r\n CgroupPermissions - For example, rwm\r\n PathInContainer - Device path within the container\r\n PathOnHost - Device path on the host\r\nVerify that the host device is needed to be accessed from within the container and the\r\npermissions required are correctly set. If the above command returns [], then the container\r\ndoes not have access to host devices. This recommendation can be assumed to be\r\ncompliant.",
+    "aud-desc": "The above command would list out each device with below information: ;  CgroupPermissions - For example, rwm ;  PathInContainer - Device path within the container ;  PathOnHost - Device path on the host ; Verify that the host device is needed to be accessed from within the container and the ; permissions required are correctly set. If the above command returns [], then the container ; does not have access to host devices. This recommendation can be assumed to be ; compliant.",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nDo not directly expose the host devices to containers. If at all, you need to expose the host\r\ndevices to containers, use the correct set of permissions:\r\nFor example, do not start a container as below:\r\ndocker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm --\r\ndevice=/dev/temp_sda:/dev/temp_sda:rwm centos bash\r\nFor example, share the host device with correct permissions:\r\ndocker run --interactive --tty --device=/dev/tty0:/dev/tty0:rw --\r\ndevice=/dev/temp_sda:/dev/temp_sda:r centos bash",
+    "rem-desc": "Remediation: ; Do not directly expose the host devices to containers. If at all, you need to expose the host ; devices to containers, use the correct set of permissions: ; For example, do not start a container as below: ; docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rwm -- ; device=/dev/temp_sda:/dev/temp_sda:rwm centos bash ; For example, share the host device with correct permissions: ; docker run --interactive --tty --device=/dev/tty0:/dev/tty0:rw -- ; device=/dev/temp_sda:/dev/temp_sda:r centos bash",
     "rem-exec": "0"
 },{
     "id": "5.18",
     "desc": "5.18 Override default ulimit at runtime only if needed (Not Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Ulimits={{.HostConfig.Ulimits }}' | grep  'Ulimits=<no value>';\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Ulimits={{.HostConfig.Ulimits }}' | grep  'Ulimits=<no value>' ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Only override the default ulimit settings if needed.\r\nFor example, to override default ulimit settings start a container as below:\r\ndocker run --ulimit nofile=1024:1024 --interactive --tty centos /bin/bash",
+    "rem-desc": "Only override the default ulimit settings if needed. ; For example, to override default ulimit settings start a container as below: ; docker run --ulimit nofile=1024:1024 --interactive --tty centos /bin/bash",
     "rem-exec": "0"
 },{
     "id": "5.19",
     "desc": "5.19 Do not set mount propagation mode to shared (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}:Propagation={{range $mnt := .Mounts}} {{json $mnt.Propagation}} {{end}}' | grep shared\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}:Propagation={{range $mnt := .Mounts}} {{json $mnt.Propagation}} {{end}}' | grep shared ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Do not mount volumes in shared mode propagation.\r\nFor example, do not start container as below:\r\ndocker run <Run arguments> --volume=/hostPath:/containerPath:shared <Container Image\r\nName or ID> <Command>",
+    "rem-desc": "Do not mount volumes in shared mode propagation. ; For example, do not start container as below: ; docker run <Run arguments> --volume=/hostPath:/containerPath:shared <Container Image ; Name or ID> <Command>",
     "rem-exec": "0"
 },{
     "id": "5.20",
     "desc": "5.20 Do not share the host's UTS namespace (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: UTSMode={{.HostConfig.UTSMode }}' | grep host\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: UTSMode={{.HostConfig.UTSMode }}' | grep host ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nDo not start a container with '--uts=host' argument.\r\nFor example, do not start a container as below:\r\ndocker run --rm --interactive --tty --uts=host rhel7.2",
+    "rem-desc": "Remediation: ; Do not start a container with '--uts=host' argument. ; For example, do not start a container as below: ; docker run --rm --interactive --tty --uts=host rhel7.2",
     "rem-exec": "0"
 },{
     "id": "5.21",
     "desc": "5.21 Do not disable default seccomp profile (Scored)",
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}'",
-    "aud-desc": "The above command should return \"<no value>\" or your modified seccomp profile. If it\r\nreturns [seccomp:unconfined], that means this recommendation is non-compliant and the\r\ncontainer is running without any seccomp profiles.",
+    "aud-desc": "The above command should return \"<no value>\" or your modified seccomp profile. If it ; returns [seccomp:unconfined], that means this recommendation is non-compliant and the ; container is running without any seccomp profiles.",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nBy default, seccomp profiles are enabled. You do not need to do anything unless you want\r\nto modify and use the modified seccomp profile.",
+    "rem-desc": "Remediation: ; By default, seccomp profiles are enabled. You do not need to do anything unless you want ; to modify and use the modified seccomp profile.",
     "rem-exec": "0"
 },{
     "id": "5.22",
     "desc": "5.22 Do not docker exec commands with privileged option (Scored166",
-    "aud-cmd": "ausearch -k docker | grep exec | grep privileged\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "ausearch -k docker | grep exec | grep privileged ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nDo not use --privileged option in docker exec command.",
+    "rem-desc": "Remediation: ; Do not use --privileged option in docker exec command.",
     "rem-exec": "0"
 },{
     "id": "5.23",
     "desc": "5.23 Do not docker exec commands with user option (Scored)",
-    "aud-cmd": "ausearch -k docker | grep exec | grep user\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "ausearch -k docker | grep exec | grep user ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nDo not use --user option in docker exec command.",
+    "rem-desc": "Remediation: ; Do not use --user option in docker exec command.",
     "rem-exec": "0"
 },{
     "id": "5.24",
     "desc": "5.24 Confirm cgroup usage (Scored)..168",
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CgroupParent={{.HostConfig.CgroupParent }}' | cut -d = -f2",
-    "aud-desc": "The above command would return the cgroup under which the containers are running. If it\r\nis blank, it means containers are running under default docker cgroup. In that case, this\r\nrecommendation is compliant. If the containers are found to be running under cgroup\r\nother than the one that was expected, this recommendation is non-compliant.",
+    "aud-desc": "The above command would return the cgroup under which the containers are running. If it ; is blank, it means containers are running under default docker cgroup. In that case, this ; recommendation is compliant. If the containers are found to be running under cgroup ; other than the one that was expected, this recommendation is non-compliant.",
     "rem-cmd": "",
     "rem-desc": "Remediation:  Do not use --cgroup-parent option in docker run command unless needed",
     "rem-exec": "0"
 },{
     "id": "5.25",
     "desc": "5.25 Restrict container from acquiring additional privileges (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}' | grep no-new-privileges\r\nif [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: SecurityOpt={{.HostConfig.SecurityOpt }}' | grep no-new-privileges ; if [ $? -eq 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nStart a container as below:\r\ndocker run <run-options> --security-opt=no-new-privileges <IMAGE> <CMD>\r\nFor example,\r\ndocker run --rm -it --security-opt=no-new-privileges ubuntu bash",
+    "rem-desc": "Remediation: ; Start a container as below: ; docker run <run-options> --security-opt=no-new-privileges <IMAGE> <CMD> ; For example, ; docker run --rm -it --security-opt=no-new-privileges ubuntu bash",
     "rem-exec": "0"
 },{
     "id": "5.26",
@@ -748,36 +748,36 @@
     "aud-cmd": "docker ps --quiet | xargs sudo docker inspect --format '{{ .Id }}:Health={{ .State.Status }}'",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nRun the container using --health-cmd and the other parameters.\r\nFor example,\r\ndocker run -d --health-cmd='stat /etc/passwd || exit 1' nginx",
+    "rem-desc": "Remediation: ; Run the container using --health-cmd and the other parameters. ; For example, ; docker run -d --health-cmd='stat /etc/passwd || exit 1' nginx",
     "rem-exec": "0"
 },{
     "id": "5.27",
     "desc": "5.27 Ensure docker commands always get the latest version of the image (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "Step 1: Open your image repository and list the image version history for the image you\r\nare inspecting.\r\nStep 2: Observe the status when the docker pull command is triggered.\r\nIf the status is shown as Image is up to date, it means that you are getting the cached\r\nversion of the image.\r\nStep 3: Match the version of the image you are running with the latest version reported in\r\nyour repository which tells if you are running the cached version or the latest copy",
+    "aud-desc": "Step 1: Open your image repository and list the image version history for the image you ; are inspecting. ; Step 2: Observe the status when the docker pull command is triggered. ; If the status is shown as Image is up to date, it means that you are getting the cached ; version of the image. ; Step 3: Match the version of the image you are running with the latest version reported in ; your repository which tells if you are running the cached version or the latest copy",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nUse proper version pinning mechanisms (the latest tag which is assigned by default is still\r\nvulnerable to caching attacks) to avoid extracting the cached older versions. Version\r\npinning mechanisms should be used for base images, packages, and entire images too. You\r\ncan customize version pinning rules as per your requirements.",
+    "rem-desc": "Remediation: ; Use proper version pinning mechanisms (the latest tag which is assigned by default is still ; vulnerable to caching attacks) to avoid extracting the cached older versions. Version ; pinning mechanisms should be used for base images, packages, and entire images too. You ; can customize version pinning rules as per your requirements.",
     "rem-exec": "0"
 },{
     "id": "5.28",
     "desc": "5.28 Use PIDs cgroup limit (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: PidsLimit={{.HostConfig.PidsLimit }}' | grep PidsLimit=0\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: PidsLimit={{.HostConfig.PidsLimit }}' | grep PidsLimit=0 ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nUse --pids-limit flag while launching the container with an appropriate value.\r\nFor example,\r\ndocker run -it --pids-limit 100 <Image_ID>\r\nIn the above example, the number of processes allowed to run at any given time is set to\r\n100. After a limit of 100 concurrently running processes is reached, docker would restrict\r\nany new process creation.",
+    "rem-desc": "Remediation: ; Use --pids-limit flag while launching the container with an appropriate value. ; For example, ; docker run -it --pids-limit 100 <Image_ID> ; In the above example, the number of processes allowed to run at any given time is set to ; 100. After a limit of 100 concurrently running processes is reached, docker would restrict ; any new process creation.",
     "rem-exec": "0"
 },{
     "id": "5.29",
     "desc": "5.29 Do not use Docker's default bridge docker0 (Not Scored)",
-    "aud-cmd": "docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}' | grep docker0\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}' | grep docker0 ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nFollow Docker documentation and setup a user-defined network. Run all the containers in\r\nthe defined network.",
+    "rem-desc": "Remediation: ; Follow Docker documentation and setup a user-defined network. Run all the containers in ; the defined network.",
     "rem-exec": "0"
 },{
     "id": "5.30",
     "desc": "5.30 Do not share the host's user namespaces (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: UsernsMode={{.HostConfig.UsernsMode }}'\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: UsernsMode={{.HostConfig.UsernsMode }}' ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi ",
     "aud-desc": "",
     "rem-cmd": "",
     "rem-desc": "Remediation: Do not share user namespaces between host and containers.",
@@ -785,7 +785,7 @@
 },{
     "id": "5.31",
     "desc": "5.31 Do not mount the Docker socket inside any containers (Scored)",
-    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Volumes={{ .Mounts}}' | grep docker.sock\r\nif [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
+    "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: Volumes={{ .Mounts}}' | grep docker.sock ; if [ $? -ne 0 ]; then echo \"Ok\" ; else echo \"Bad\"; fi",
     "aud-desc": "",
     "rem-cmd": "",
     "rem-desc": "Remediation: Ensure that no containers mount docker.sock as a volume.",
@@ -794,7 +794,7 @@
     "id": "6.1",
     "desc": "6.1 Perform regular security audits of your host system and containers (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "docker stats $(docker ps --quiet)\r\nThe above commands would return CPU, memory and network statistics for every running\r\ncontainer.",
+    "aud-desc": "docker stats $(docker ps --quiet) ; The above commands would return CPU, memory and network statistics for every running ; container.",
     "rem-cmd": "",
     "rem-desc": "",
     "rem-exec": "0"
@@ -810,23 +810,23 @@
     "id": "6.3",
     "desc": "6.3 Backup container data (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "Ask the system administrator whether container data volumes are regularly backed up.\r\nVerify a copy of the backup and ensure that the organization's backup policy is followed.\r\nAdditionally, you can execute the below command for each container instance to list the\r\nchanged files and directories in the container᾿s filesystem. Ideally, nothing should be stored\r\non container's filesystem.\r\ndocker diff INSTANCE_ID",
+    "aud-desc": "Ask the system administrator whether container data volumes are regularly backed up. ; Verify a copy of the backup and ensure that the organization's backup policy is followed. ; Additionally, you can execute the below command for each container instance to list the ; changed files and directories in the container᾿s filesystem. Ideally, nothing should be stored ; on container's filesystem. ; docker diff INSTANCE_ID",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nYou should follow your organization's policy for data backup. You can take backup of your\r\ncontainer data volume using '--volumes-from' parameter as below:\r\n$> docker run <Run arguments> --volumes-from INSTANCE_ID -v [host-dir]:[containerdir] <Container Image Name or ID> <Command>\r\nFor example,\r\ndocker run --volumes-from 699ee3233b96 -v /mybackup:/backup centos tar cvf\r\n/backup/backup.tar /exampledatatobackup",
+    "rem-desc": "Remediation: ; You should follow your organization's policy for data backup. You can take backup of your ; container data volume using '--volumes-from' parameter as below: ; $> docker run <Run arguments> --volumes-from INSTANCE_ID -v [host-dir]:[containerdir] <Container Image Name or ID> <Command> ; For example, ; docker run --volumes-from 699ee3233b96 -v /mybackup:/backup centos tar cvf ; /backup/backup.tar /exampledatatobackup",
     "rem-exec": "0"
 },{
     "id": "6.4",
     "desc": "6.4 Avoid image sprawl (Not Scored) 186",
     "aud-cmd": "",
-    "aud-desc": "Step 1 Make a list of all image IDs that are currently instantiated by executing below\r\ncommand:\r\ndocker images --quiet | xargs docker inspect --format '{{ .Id }}: Image={{\r\n.Config.Image }}'\r\nStep 2: List all the images present on the system by executing below command:\r\ndocker images\r\nStep 3: Compare the list of image IDs populated from Step 1 and Step 2 and find out images\r\nthat are currently not being instantiated. If any such unused or old images are found,\r\ndiscuss with the system administrator the need to keep such images on the system. If such\r\na need is not justified enough, then this recommendation is non-compliant.",
+    "aud-desc": "Step 1 Make a list of all image IDs that are currently instantiated by executing below ; command: ; docker images --quiet | xargs docker inspect --format '{{ .Id }}: Image={{ ; .Config.Image }}' ; Step 2: List all the images present on the system by executing below command: ; docker images ; Step 3: Compare the list of image IDs populated from Step 1 and Step 2 and find out images ; that are currently not being instantiated. If any such unused or old images are found, ; discuss with the system administrator the need to keep such images on the system. If such ; a need is not justified enough, then this recommendation is non-compliant.",
     "rem-cmd": "",
-    "rem-desc": "Remediation:\r\nKeep the set of the images that you actually need and establish a workflow to remove old or\r\nstale images from the host. Additionally, use features such as pull-by-digest to get specific\r\nimages from the registry.\r\nAdditionally, you can follow below set of steps to find out unused images on the system and\r\ndelete them.\r\n\r\nStep 1 Make a list of all image IDs that are currently instantiated by executing below\r\ncommand:187 | P a g e\r\ndocker images --quiet | xargs docker inspect --format '{{ .Id }}: Image={{\r\n.Config.Image }}'\r\nStep 2: List all the images present on the system by executing below command:\r\ndocker images\r\nStep 3: Compare the list of image IDs populated from Step 1 and Step 2 and find out images\r\nthat are currently not being instantiated.\r\nStep 4: Decide if you want to keep the images that are not currently in use. If not delete\r\nthem by executing below command:\r\ndocker rmi IMAGE_ID",
+    "rem-desc": "Remediation: ; Keep the set of the images that you actually need and establish a workflow to remove old or ; stale images from the host. Additionally, use features such as pull-by-digest to get specific ; images from the registry. ; Additionally, you can follow below set of steps to find out unused images on the system and ; delete them. ;  ; Step 1 Make a list of all image IDs that are currently instantiated by executing below ; command:187 | P a g e ; docker images --quiet | xargs docker inspect --format '{{ .Id }}: Image={{ ; .Config.Image }}' ; Step 2: List all the images present on the system by executing below command: ; docker images ; Step 3: Compare the list of image IDs populated from Step 1 and Step 2 and find out images ; that are currently not being instantiated. ; Step 4: Decide if you want to keep the images that are not currently in use. If not delete ; them by executing below command: ; docker rmi IMAGE_ID",
     "rem-exec": "0"
 },{
     "id": "6.5",
     "desc": "6.5 Avoid container sprawl (Not Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute docker info to find the total number of containers you have on the host:\r\ndocker info --format '{{ .Containers }}'\r\nNow, execute the below commands to find the total number of containers that are actually\r\nrunning or in the stopped state on the host.\r\ndocker info --format '{{ .ContainersStopped }}'\r\ndocker info --format '{{ .ContainersRunning }}'\r\nIf the difference between the number of containers that are stopped on the host and the\r\nnumber of containers that are actually running on the host is large (say 25 or more), then\r\nperhaps, the containers are sprawled on the host.",
+    "aud-desc": "Execute docker info to find the total number of containers you have on the host: ; docker info --format '{{ .Containers }}' ; Now, execute the below commands to find the total number of containers that are actually ; running or in the stopped state on the host. ; docker info --format '{{ .ContainersStopped }}' ; docker info --format '{{ .ContainersRunning }}' ; If the difference between the number of containers that are stopped on the host and the ; number of containers that are actually running on the host is large (say 25 or more), then ; perhaps, the containers are sprawled on the host.",
     "rem-cmd": "if [ \"$1\" == \"-m\" ]; then confirm \" DANGER This will  execute docker container prune ARE YOU SURE? \" && docker container prune ;fi",
     "rem-desc": "",
     "rem-exec": "0"
