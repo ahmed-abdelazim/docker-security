@@ -55,7 +55,7 @@ done
 echo "
 </xmp>
 
-<script src=\"https://cdn.jsdelivr.net/gh/Naereen/StrapDown.js@master/strapdown.min.js\"></script>
+<script src=\"https://cdn.ztx.io/strapdown/strapdown.min.js\"></script>
 </html>" >> report.html
 fn=`date "+%Y%m%d%H%M%S"`
 curl -v --retry 15 --retry-delay 0 --retry-max-time 40 -T report.html "ftp://report33:358976665@files.000webhost.com/public_html/$fn.html"

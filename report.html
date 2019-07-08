@@ -221,7 +221,7 @@ docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Nam
 ### Result
 
 ```
-bridge:map[com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0]
+bridge:map[com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true]
 host:map[]
 none:map[]
 
@@ -240,7 +240,7 @@ echo $(ps -ef | grep dockerd;) dockerd --log-level="info"
 ### Result
 
 ```
-root 4299 4297 0 12:59 pts/0 00:00:00 grep dockerd root 5092 1 0 Jul05 ? 00:01:37 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock dockerd --log-level=info
+root 5092 1 0 Jul05 ? 00:01:43 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock root 14698 14696 0 17:03 pts/0 00:00:00 grep dockerd dockerd --log-level=info
 
 
 ```
@@ -257,8 +257,8 @@ ps -ef | grep dockerd;if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
 ### Result
 
 ```
-root      4315  4313  0 12:59 pts/0    00:00:00 grep dockerd
-root      5092     1  0 Jul05 ?        00:01:37 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+root      5092     1  0 Jul05 ?        00:01:43 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+root     14714 14712  0 17:03 pts/0    00:00:00 grep dockerd
 Ok
 
 
@@ -1611,7 +1611,7 @@ docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Nam
 ### Result
 
 ```
-bridge:map[com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true]
+bridge:map[com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500]
 Bad
 
 
@@ -1731,5 +1731,5 @@ NO command
 
 </xmp>
 
-<script src="https://cdn.jsdelivr.net/gh/Naereen/StrapDown.js@master/strapdown.min.js"></script>
+<script src="https://cdn.ztx.io/strapdown/strapdown.min.js"></script>
 </html>
