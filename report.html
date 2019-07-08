@@ -27,7 +27,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -215,13 +215,13 @@ Bad
 ## 2.1 Restrict network traffic between containers (Scored)
 ### Used command
 ```
-docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}';
+docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}'
 ```
 
 ### Result
 
 ```
-bridge:map[com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true]
+bridge:map[com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0]
 host:map[]
 none:map[]
 
@@ -234,13 +234,13 @@ none:map[]
 ## 2.2 Set the logging level (Scored)
 ### Used command
 ```
-echo $(ps -ef | grep dockerd;) dockerd --log-level="info";
+echo $(ps -ef | grep dockerd;) dockerd --log-level="info"
 ```
 
 ### Result
 
 ```
-root 5092 1 0 Jul05 ? 00:01:15 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock root 26998 26996 0 20:33 pts/0 00:00:00 grep dockerd dockerd --log-level=info
+root 4299 4297 0 12:59 pts/0 00:00:00 grep dockerd root 5092 1 0 Jul05 ? 00:01:37 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock dockerd --log-level=info
 
 
 ```
@@ -257,8 +257,8 @@ ps -ef | grep dockerd;if [ $? -eq 0 ]; then echo "Ok" ; else echo "Bad"; fi
 ### Result
 
 ```
-root      5092     1  0 Jul05 ?        00:01:15 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
-root     27013 27011  0 20:33 pts/0    00:00:00 grep dockerd
+root      4315  4313  0 12:59 pts/0    00:00:00 grep dockerd
+root      5092     1  0 Jul05 ?        00:01:37 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
 Ok
 
 
@@ -322,12 +322,13 @@ Ok
 ## 2.7 Set default ulimit as appropriate (Not Scored)
 ### Used command
 ```
-ps -ef | grep dockerd | grep -v grep | grep default-ulimit ;
+ps -ef | grep dockerd | grep -v grep | grep default-ulimit
 ```
 
 ### Result
 
 ```
+No output from command
 
 
 ```
@@ -338,12 +339,13 @@ ps -ef | grep dockerd | grep -v grep | grep default-ulimit ;
 ## 2.8 Enable user namespace support (Scored)
 ### Used command
 ```
-docker info --format '{{ .SecurityOptions }}' | grep userns;
+docker info --format '{{ .SecurityOptions }}' | grep userns
 ```
 
 ### Result
 
 ```
+No output from command
 
 
 ```
@@ -360,6 +362,7 @@ ps -ef | grep -v grep| grep dockerd | grep cgroup-parent
 ### Result
 
 ```
+No output from command
 
 
 ```
@@ -474,6 +477,7 @@ docker node ls | grep 'Leader'
 ### Result
 
 ```
+No output from command
 
 
 ```
@@ -585,7 +589,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -600,7 +604,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -728,12 +732,12 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
 <br>
-<p> Execute the below command to verify that the registry certificate files have permissions of ; '444' or more restrictive: ; stat -c %a /etc/docker/certs.d/REGISTRY-NAME/* </p>
+<p> Execute the below command to verify that the registry certificate files have permissions of '444' or more restrictive: `stat -c %a /etc/docker/certs.d/REGISTRY-NAME/*` </p>
 
 ---
 ## 3.9 Verify that TLS CA certificate file ownership is set to root:root (Scored)
@@ -743,12 +747,12 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
 <br>
-<p> Execute the below command to verify that the TLS CA certificate file is owned and groupowned by 'root': ; stat -c %U:%G <path to TLS CA certificate file> | grep -v root:root ; The above command should not return anything. </p>
+<p> Execute the below command to verify that the TLS CA certificate file is owned and groupowned by 'root': `stat -c %U:%G <path to TLS CA certificate file> | grep -v root:root` The above command should not return anything. </p>
 
 ---
 ## 3.10 Verify that TLS CA certificate file permissions are set to 444 or more restrictive (Scored)
@@ -758,12 +762,12 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
 <br>
-<p> Execute the below command to verify that the TLS CA certificate file has permissions of ; '444' or more restrictive: ; stat -c %a <path to TLS CA certificate file> </p>
+<p> Execute the below command to verify that the TLS CA certificate file has permissions of ; '444' or more restrictive: ; `stat -c %a <path to TLS CA certificate file>` </p>
 
 ---
 ## 3.11 Verify that Docker server certificate file ownership is set to root:root (Scored)
@@ -773,12 +777,12 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
 <br>
-<p> Audit: ; Execute the below command to verify that the Docker server certificate file is owned and ; group-owned by 'root': ; stat -c %U:%G <path to Docker server certificate file> | grep -v root:root </p>
+<p> Audit: ; Execute the below command to verify that the Docker server certificate file is owned and ; group-owned by 'root': `stat -c %U:%G <path to Docker server certificate file> | grep -v root:root` </p>
 
 ---
 ## 3.12 Verify that Docker server certificate file permissions are set to 444 or more restrictive (Scored)
@@ -788,7 +792,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -803,12 +807,12 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
 <br>
-<p> Execute the below command to verify that the Docker server certificate key file is owned ; and group-owned by 'root': ; stat -c %U:%G <path to Docker server certificate key file> | grep -v root:root </p>
+<p> Execute the below command to verify that the Docker server certificate key file is owned ; and group-owned by 'root': `stat -c %U:%G <path to Docker server certificate key file> | grep -v root:root` </p>
 
 ---
 ## 3.14 Verify that Docker server certificate key file permissions are set to 400 (Scored)
@@ -818,12 +822,12 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
 <br>
-<p> Execute the below command to verify that the Docker server certificate key file has ; permissions of '400': ; stat -c %a <path to Docker server certificate key file> </p>
+<p> Execute the below command to verify that the Docker server certificate key file has ; permissions of '400': `stat -c %a <path to Docker server certificate key file>` </p>
 
 ---
 ## 3.15 Verify that Docker socket file ownership is set to root:docker (Scored)
@@ -945,7 +949,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1010,7 +1014,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1044,7 +1048,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1571,7 +1575,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1607,7 +1611,7 @@ docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Nam
 ### Result
 
 ```
-bridge:map[com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true]
+bridge:map[com.docker.network.bridge.enable_icc:true com.docker.network.bridge.enable_ip_masquerade:true com.docker.network.bridge.host_binding_ipv4:0.0.0.0 com.docker.network.bridge.name:docker0 com.docker.network.driver.mtu:1500 com.docker.network.bridge.default_bridge:true]
 Bad
 
 
@@ -1657,7 +1661,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1672,7 +1676,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1686,7 +1690,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1701,7 +1705,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1716,7 +1720,7 @@ No command
 ### Result
 
 ```
-NO output from command
+NO command
 
 
 ```
@@ -1727,5 +1731,5 @@ NO output from command
 
 </xmp>
 
-<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Naereen/StrapDown.js@master/strapdown.min.js"></script>
 </html>

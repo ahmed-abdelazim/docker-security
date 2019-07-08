@@ -105,7 +105,7 @@
 },{
     "id": "2.1",
     "desc": "2.1 Restrict network traffic between containers (Scored)",
-    "aud-cmd": "docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}';",
+    "aud-cmd": "docker network ls --quiet | xargs xargs docker network inspect --format '{{ .Name }}:{{ .Options }}'",
     "aud-desc": "**It should return com.docker.network.bridge.enable_icc:false.**",
     "rem-cmd": "",
     "rem-desc": "",
@@ -113,7 +113,7 @@
 },{
     "id": "2.2",
     "desc": "2.2 Set the logging level (Scored)",
-    "aud-cmd": "echo $(ps -ef | grep dockerd;) dockerd --log-level=\"info\";",
+    "aud-cmd": "echo $(ps -ef | grep dockerd;) dockerd --log-level=\"info\"",
     "aud-desc": "Ensure that either the '--log-level' parameter is not present or if present, then it is set to 'info'.",
     "rem-cmd": "",
     "rem-desc": "",
@@ -153,7 +153,7 @@
 },{
     "id": "2.7",
     "desc": "2.7 Set default ulimit as appropriate (Not Scored)",
-    "aud-cmd": "ps -ef | grep dockerd | grep -v grep | grep default-ulimit ;",
+    "aud-cmd": "ps -ef | grep dockerd | grep -v grep | grep default-ulimit",
     "aud-desc": "Ensure that the '--default-ulimit' parameter is set as appropriate.",
     "rem-cmd": "",
     "rem-desc": "",
@@ -161,7 +161,7 @@
 },{
     "id": "2.8",
     "desc": "2.8 Enable user namespace support (Scored)",
-    "aud-cmd": "docker info --format '{{ .SecurityOptions }}' | grep userns;",
+    "aud-cmd": "docker info --format '{{ .SecurityOptions }}' | grep userns",
     "aud-desc": "Ensure that the userns is listed under Security Options",
     "rem-cmd": "",
     "rem-desc": "",
@@ -354,7 +354,7 @@
     "id": "3.8",
     "desc": "3.8 Verify that registry certificate file permissions are set to 444 or more restrictive (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the registry certificate files have permissions of ; '444' or more restrictive: ; stat -c %a /etc/docker/certs.d/REGISTRY-NAME/*",
+    "aud-desc": "Execute the below command to verify that the registry certificate files have permissions of '444' or more restrictive: `stat -c %a /etc/docker/certs.d/REGISTRY-NAME/*`",
     "rem-cmd": "",
     "rem-desc": "Remediation: chmod 444 /etc/docker/certs.d/<registry-name>/*",
     "rem-exec": "0"
@@ -362,7 +362,7 @@
     "id": "3.9",
     "desc": "3.9 Verify that TLS CA certificate file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the TLS CA certificate file is owned and groupowned by 'root': ; stat -c %U:%G <path to TLS CA certificate file> | grep -v root:root ; The above command should not return anything.",
+    "aud-desc": "Execute the below command to verify that the TLS CA certificate file is owned and groupowned by 'root': `stat -c %U:%G <path to TLS CA certificate file> | grep -v root:root` The above command should not return anything.",
     "rem-cmd": "",
     "rem-desc": "Remediation: chown root:root <path to TLS CA certificate file>",
     "rem-exec": "0"
@@ -370,7 +370,7 @@
     "id": "3.10",
     "desc": "3.10 Verify that TLS CA certificate file permissions are set to 444 or more restrictive (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the TLS CA certificate file has permissions of ; '444' or more restrictive: ; stat -c %a <path to TLS CA certificate file>",
+    "aud-desc": "Execute the below command to verify that the TLS CA certificate file has permissions of ; '444' or more restrictive: ; `stat -c %a <path to TLS CA certificate file>`",
     "rem-cmd": "",
     "rem-desc": "Remediation: chmod 444 <path to TLS CA certificate file>",
     "rem-exec": "0"
@@ -378,7 +378,7 @@
     "id": "3.11",
     "desc": "3.11 Verify that Docker server certificate file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Audit: ; Execute the below command to verify that the Docker server certificate file is owned and ; group-owned by 'root': ; stat -c %U:%G <path to Docker server certificate file> | grep -v root:root",
+    "aud-desc": "Audit: ; Execute the below command to verify that the Docker server certificate file is owned and ; group-owned by 'root': `stat -c %U:%G <path to Docker server certificate file> | grep -v root:root`",
     "rem-cmd": "",
     "rem-desc": "Remediation: chown root:root <path to Docker server certificate file>",
     "rem-exec": "0"
@@ -394,7 +394,7 @@
     "id": "3.13",
     "desc": "3.13 Verify that Docker server certificate key file ownership is set to root:root (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the Docker server certificate key file is owned ; and group-owned by 'root': ; stat -c %U:%G <path to Docker server certificate key file> | grep -v root:root",
+    "aud-desc": "Execute the below command to verify that the Docker server certificate key file is owned ; and group-owned by 'root': `stat -c %U:%G <path to Docker server certificate key file> | grep -v root:root`",
     "rem-cmd": "",
     "rem-desc": "Remediation: chown root:root <path to Docker server certificate key file>",
     "rem-exec": "0"
@@ -402,7 +402,7 @@
     "id": "3.14",
     "desc": "3.14 Verify that Docker server certificate key file permissions are set to 400 (Scored)",
     "aud-cmd": "",
-    "aud-desc": "Execute the below command to verify that the Docker server certificate key file has ; permissions of '400': ; stat -c %a <path to Docker server certificate key file>",
+    "aud-desc": "Execute the below command to verify that the Docker server certificate key file has ; permissions of '400': `stat -c %a <path to Docker server certificate key file>`",
     "rem-cmd": "",
     "rem-desc": "Remediation: chmod 400 <path to Docker server certificate key file>",
     "rem-exec": "0"
@@ -564,7 +564,7 @@
     "aud-cmd": "docker ps --quiet --all | xargs docker inspect --format '{{ .Id }}: CapAdd={{.HostConfig.CapAdd }} CapDrop={{ .HostConfig.CapDrop }}'",
     "aud-desc": "Verify that the added and dropped Linux Kernel Capabilities are in line with the ones needed for container process for each container instance.",
     "rem-cmd": "",
-    "rem-desc": "Remediation: ; Execute the below command to add needed capabilities: ; $> docker run --cap-add={\"Capability 1\",\"Capability 2\"} <Run arguments> <Container ; Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-add={\"NET_ADMIN\",\"SYS_ADMIN\"} centos:latest ; /bin/bash ; Execute the below command to drop unneeded capabilities:131 | P a g e ; $> docker run --cap-drop={\"Capability 1\",\"Capability 2\"} <Run arguments> <Container ; Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-drop={\"SETUID\",\"SETGID\"} centos:latest /bin/bash ; Alternatively, ; You may choose to drop all capabilities and add only add the needed ones: ; $> docker run --cap-drop=all --cap-add={\"Capability 1\",\"Capability 2\"} <Run arguments> ; <Container Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-drop=all --cap-add={\"NET_ADMIN\",\"SYS_ADMIN\"} ; centos:latest /bin/bash ; ",
+    "rem-desc": "Remediation: ; Execute the below command to add needed capabilities: ; $> docker run --cap-add={\"Capability 1\",\"Capability 2\"} <Run arguments> <Container ; Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-add={\"NET_ADMIN\",\"SYS_ADMIN\"} centos:latest ; /bin/bash ; Execute the below command to drop unneeded capabilities:131 | P a g e ; $> docker run --cap-drop={\"Capability 1\",\"Capability 2\"} <Run arguments> <Container ; Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-drop={\"SETUID\",\"SETGID\"} centos:latest /bin/bash ; Alternatively, ; You may choose to drop all capabilities and add only add the needed ones: ; $> docker run --cap-drop=all --cap-add={\"Capability 1\",\"Capability 2\"} <Run arguments> ; <Container Image Name or ID> <Command> ; For example, ; docker run --interactive --tty --cap-drop=all --cap-add={\"NET_ADMIN\",\"SYS_ADMIN\"} ; centos:latest /bin/bash",
     "rem-exec": "0"
 },{
     "id": "5.4",

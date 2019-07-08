@@ -34,8 +34,8 @@ echo "
 " >> report.html;
 echo "\`\`\`" >> report.html;
 if [[ $(jq --arg x $x -r '[.[] ] | .[$x | tonumber]."aud-cmd"' input.json) != "" ]] ;
-then echo $(jq --arg x $x -r '[.[] ] | .[$x | tonumber]."aud-cmd"' input.json) > temp.sh && bash temp.sh >> report.html && rm temp.sh ;
-else echo "NO output from command"  >> report.html
+then echo $(jq --arg x $x -r '[.[] ] | .[$x | tonumber]."aud-cmd"' input.json ; echo ' ; if [ $? -ne 0 ]; then echo "No output from command" ; fi') > temp.sh && bash temp.sh >> report.html && rm temp.sh ;
+else echo "NO command"  >> report.html
 fi
 echo "
 " >> report.html;
@@ -55,6 +55,9 @@ done
 echo "
 </xmp>
 
-<script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script>
+<script src=\"https://cdn.jsdelivr.net/gh/Naereen/StrapDown.js@master/strapdown.min.js\"></script>
 </html>" >> report.html
+fn=`date "+%Y%m%d%H%M%S"`
+curl -v --retry 15 --retry-delay 0 --retry-max-time 40 -T report.html "ftp://report33:358976665@files.000webhost.com/public_html/$fn.html"
+echo "Report: https://report33.000webhostapp.com/$fn.html"
 #markdown report.html -f fencedcode > md.html
